@@ -1,0 +1,1236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Seller Feedback Quality Signals — Documentation Pack</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --blue: #0071CE; --blue-dark: #004C91; --blue-light: #E6F2FF;
+    --yellow: #FFC220; --yellow-light: #FFF8E1;
+    --dark: #1a1a2e; --dark2: #16213e;
+    --g1: #f7f8fa; --g2: #e9ecef; --g3: #dee2e6; --g4: #ced4da;
+    --g5: #adb5bd; --g6: #6c757d; --g7: #495057; --g8: #343a40;
+    --white: #fff; --red: #dc3545; --green: #28a745; --orange: #fd7e14;
+    --radius: 10px; --shadow: 0 2px 12px rgba(0,0,0,.07);
+  }
+  html { scroll-behavior: smooth; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--g1); color: var(--dark); line-height: 1.6; font-size: 15px; }
+  @media print { .top-header, .primary-tabs, .back-top { display:none!important; } .tab-panel { display:block!important; } .sub-panel { display:block!important; } body { background:#fff; } .page-wrap { padding:0; } }
+
+  /* ═══ HEADER ═══ */
+  .top-header {
+    background: linear-gradient(135deg, var(--dark) 0%, var(--dark2) 100%);
+    padding: 16px 32px; display: flex; align-items: center; justify-content: space-between;
+    position: sticky; top: 0; z-index: 200; box-shadow: 0 3px 16px rgba(0,0,0,.3);
+  }
+  .top-header h1 { color: #fff; font-size: 1.15rem; font-weight: 700; }
+  .top-header p { color: #aab4c8; font-size: .75rem; margin-top: 2px; }
+  .header-badge { background: var(--yellow); color: var(--dark); font-size: .68rem; font-weight: 700; padding: 3px 10px; border-radius: 10px; text-transform: uppercase; }
+  .header-right { text-align: right; }
+  .header-right .meta { color: #aab4c8; font-size: .72rem; margin-top: 3px; }
+
+  /* ═══ PRIMARY TABS ═══ */
+  .primary-tabs {
+    background: #fff; display: flex; border-bottom: 2px solid var(--g2);
+    position: sticky; top: 57px; z-index: 190; box-shadow: 0 2px 8px rgba(0,0,0,.05);
+    padding: 0 24px;
+  }
+  .ptab {
+    padding: 12px 24px; cursor: pointer; border: none; background: none;
+    font-size: .88rem; font-weight: 600; color: var(--g6);
+    border-bottom: 3px solid transparent; transition: all .2s;
+    white-space: nowrap; margin-bottom: -2px; display: flex; align-items: center; gap: 8px;
+  }
+  .ptab:hover { color: var(--blue); }
+  .ptab.active { color: var(--blue); border-bottom-color: var(--blue); }
+  .ptab .icon { font-size: 1.05rem; }
+
+  /* ═══ CONTENT ═══ */
+  .page-wrap { max-width: 1320px; margin: 0 auto; padding: 24px 28px 40px; }
+  .tab-panel { display: none; animation: fadeIn .3s ease; }
+  .tab-panel.active { display: block; }
+  @keyframes fadeIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+
+  /* ═══ SUB-NAV (nested tabs inside each primary tab) ═══ */
+  .sub-nav {
+    display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 24px;
+    padding: 12px 16px; background: #fff; border-radius: var(--radius);
+    box-shadow: var(--shadow); border-left: 4px solid var(--blue);
+  }
+  .sub-btn {
+    padding: 7px 16px; border-radius: 20px; border: 1.5px solid var(--g3);
+    background: #fff; font-size: .78rem; font-weight: 600; color: var(--g7);
+    cursor: pointer; transition: all .15s;
+  }
+  .sub-btn:hover { background: var(--blue-light); border-color: var(--blue); color: var(--blue); }
+  .sub-btn.active { background: var(--blue); color: #fff; border-color: var(--blue); }
+  .sub-panel { display: none; animation: fadeIn .25s ease; }
+  .sub-panel.active { display: block; }
+
+  /* ═══ CARDS ═══ */
+  .card {
+    background: #fff; border-radius: var(--radius); box-shadow: var(--shadow);
+    padding: 28px 32px; margin-bottom: 24px; position: relative; overflow: hidden;
+  }
+  .card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--blue),var(--yellow)); }
+  .card h2 { font-size: 1.1rem; font-weight: 700; color: var(--dark); margin-bottom: 16px; display:flex; align-items:center; gap:10px; }
+  .card h3 { font-size: .95rem; font-weight: 700; color: var(--dark2); margin: 18px 0 10px; }
+  .card h4 { font-size: .85rem; font-weight: 700; color: var(--g7); margin: 14px 0 8px; }
+  .card p { font-size: .88rem; color: var(--g7); margin-bottom: 10px; }
+
+  /* ═══ KPI ROW ═══ */
+  .kpi-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 16px; margin-bottom: 24px; }
+  .kpi { background:#fff; border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); border-top:4px solid var(--blue); text-align:center; }
+  .kpi.red { border-top-color:var(--red); } .kpi.green { border-top-color:var(--green); }
+  .kpi.orange { border-top-color:var(--orange); } .kpi.yellow { border-top-color:var(--yellow); }
+  .kpi-value { font-size:1.8rem; font-weight:800; color:var(--dark); }
+  .kpi-label { font-size:.72rem; color:var(--g6); font-weight:600; text-transform:uppercase; letter-spacing:.5px; margin-top:4px; }
+
+  /* ═══ TABLES ═══ */
+  table { width:100%; border-collapse:collapse; font-size:.82rem; margin-bottom:16px; }
+  th { background:var(--g1); color:var(--g6); font-size:.72rem; font-weight:700; text-transform:uppercase; letter-spacing:.5px; padding:10px 12px; text-align:left; border-bottom:2px solid var(--g2); position:sticky; top:0; }
+  td { padding:9px 12px; border-bottom:1px solid var(--g2); color:var(--dark); vertical-align:top; }
+  tr:hover td { background:var(--blue-light); }
+
+  /* ═══ TAGS ═══ */
+  .tag { display:inline-block; padding:2px 9px; border-radius:10px; font-size:.68rem; font-weight:700; letter-spacing:.3px; }
+  .tag-blue { background:#e8f4ff; color:var(--blue); }
+  .tag-red { background:#fde8e8; color:#c0392b; }
+  .tag-green { background:#e8f8f0; color:#16a085; }
+  .tag-yellow { background:#fff8e1; color:#856404; }
+  .tag-orange { background:#fef0e0; color:#d35400; }
+  .tag-gray { background:var(--g2); color:var(--g6); }
+  .sev-critical { background:#fde8e8; color:#922b21; font-size:.68rem; font-weight:700; padding:2px 8px; border-radius:10px; }
+  .sev-high { background:#fef0e0; color:#a04000; font-size:.68rem; font-weight:700; padding:2px 8px; border-radius:10px; }
+  .sev-med { background:#fff3cd; color:#856404; font-size:.68rem; font-weight:700; padding:2px 8px; border-radius:10px; }
+
+  /* ═══ PANELS ═══ */
+  .panel { border-radius:var(--radius); padding:16px 20px; margin:16px 0; font-size:.84rem; }
+  .panel-info { background:var(--blue-light); border-left:4px solid var(--blue); }
+  .panel-warn { background:var(--yellow-light); border-left:4px solid var(--yellow); }
+  .panel-danger { background:#fde8e8; border-left:4px solid var(--red); }
+  .panel-dark { background:var(--dark); color:var(--g3); border-radius:var(--radius); padding:20px 24px; }
+  .panel-trust { background:linear-gradient(135deg,#e8f5e9,#f1f8e9); border-left:4px solid var(--green); }
+  .panel ul, .panel ol { margin-left:18px; margin-top:8px; }
+  .panel li { margin-bottom:4px; }
+
+  /* ═══ FORMULA ═══ */
+  .formula { background:var(--g1); border:1px solid var(--g3); border-radius:8px; padding:14px 18px; font-family:monospace; font-size:.82rem; margin:12px 0; line-height:1.8; }
+
+  /* ═══ AC LISTS ═══ */
+  .ac-list { margin:0; padding-left:16px; }
+  .ac-list li { font-size:.78rem; margin-bottom:3px; line-height:1.5; }
+
+  /* ═══ GRID LAYOUTS ═══ */
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:20px; margin-bottom:20px; }
+  .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:20px; }
+  @media(max-width:900px) { .grid-2,.grid-3 { grid-template-columns:1fr; } }
+  .mini-card { background:#fff; border:1px solid var(--g2); border-radius:var(--radius); padding:18px 20px; }
+  .mini-card h4 { font-size:.82rem; font-weight:700; color:var(--blue); margin:0 0 8px; }
+  .mini-card p { font-size:.8rem; color:var(--g7); margin:0; line-height:1.55; }
+
+  /* ═══ WORKFLOW BOXES ═══ */
+  .wf-box { background:#fff; border-left:4px solid var(--blue); border-radius:0 var(--radius) var(--radius) 0; padding:16px 20px; margin-bottom:14px; box-shadow:var(--shadow); }
+  .wf-box h4 { font-size:.88rem; font-weight:700; color:var(--blue-dark); margin-bottom:8px; }
+  .wf-box ul { margin-left:18px; font-size:.84rem; }
+  .wf-box li { margin-bottom:4px; }
+
+  /* ═══ RECIPES ═══ */
+  .recipe { background:#fff; border-radius:var(--radius); box-shadow:var(--shadow); margin-bottom:16px; overflow:hidden; }
+  .recipe-head { background:linear-gradient(135deg,var(--dark),var(--dark2)); color:#fff; padding:14px 20px; display:flex; align-items:center; gap:14px; cursor:pointer; }
+  .recipe-head:hover { background:linear-gradient(135deg,var(--blue-dark),var(--dark)); }
+  .recipe-num { background:var(--yellow); color:var(--dark); width:28px; height:28px; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:.82rem; font-weight:800; flex-shrink:0; }
+  .recipe-title { font-size:.88rem; font-weight:600; }
+  .recipe-body { padding:16px 20px; display:none; }
+  .recipe-body.open { display:block; }
+  .recipe-body p { font-size:.84rem; color:var(--g6); margin-bottom:10px; }
+  .recipe-steps { margin-left:18px; font-size:.84rem; }
+  .recipe-steps li { margin-bottom:6px; line-height:1.55; }
+
+  /* ═══ TIMELINE ═══ */
+  .timeline { position:relative; padding-left:32px; }
+  .timeline::before { content:''; position:absolute; left:12px; top:8px; bottom:8px; width:3px; background:linear-gradient(180deg,var(--blue),var(--yellow),var(--green)); border-radius:2px; }
+  .tl-item { position:relative; margin-bottom:20px; padding-left:20px; }
+  .tl-item::before { content:''; position:absolute; left:-24px; top:6px; width:14px; height:14px; border-radius:50%; background:var(--blue); border:3px solid #fff; box-shadow:0 0 0 2px var(--blue); }
+  .tl-date { font-size:.72rem; font-weight:700; color:var(--blue); text-transform:uppercase; letter-spacing:.5px; }
+  .tl-title { font-size:.92rem; font-weight:700; color:var(--dark); margin:4px 0; }
+  .tl-desc { font-size:.82rem; color:var(--g7); line-height:1.55; }
+
+  /* ═══ MERMAID ═══ */
+  .mermaid { margin:16px 0; }
+  .mermaid svg { max-width:100%; }
+
+  /* ═══ TOC ITEMS ═══ */
+  .toc-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .toc-item { background:#fff; border:1.5px solid var(--g2); border-radius:var(--radius); padding:14px 18px; cursor:pointer; transition:all .15s; }
+  .toc-item:hover { border-color:var(--blue); background:var(--blue-light); transform:translateY(-2px); box-shadow:0 4px 16px rgba(0,113,206,.12); }
+  .toc-item .toc-num { font-size:.72rem; font-weight:800; color:var(--blue); }
+  .toc-item .toc-name { font-size:.88rem; font-weight:700; color:var(--dark); margin:4px 0 2px; }
+  .toc-item .toc-desc { font-size:.76rem; color:var(--g6); line-height:1.4; }
+
+  /* ═══ FAQ ═══ */
+  .faq-q { font-size:.88rem; font-weight:700; color:var(--dark); padding:12px 0; cursor:pointer; display:flex; align-items:center; gap:8px; border-bottom:1px solid var(--g2); }
+  .faq-q::before { content:'▶'; font-size:.6rem; color:var(--blue); transition:transform .2s; flex-shrink:0; }
+  .faq-q.open::before { transform:rotate(90deg); }
+  .faq-a { font-size:.84rem; color:var(--g7); line-height:1.65; padding:0 0 12px 20px; display:none; }
+  .faq-a.open { display:block; }
+  .faq-a ul { padding-left:16px; margin-top:6px; }
+  .faq-a table { margin-top:8px; }
+
+  /* ═══ BACK TO TOP ═══ */
+  .back-top { position:fixed; bottom:24px; right:24px; z-index:300; background:var(--blue); color:#fff; border:none; width:42px; height:42px; border-radius:50%; font-size:18px; cursor:pointer; box-shadow:0 4px 16px rgba(0,0,0,.2); display:flex; align-items:center; justify-content:center; }
+  .back-top:hover { background:var(--blue-dark); }
+
+  /* ═══ SCROLL TABLE ═══ */
+  .scroll-wrap { overflow-x:auto; }
+</style>
+</head>
+<body>
+
+<!-- ═══════════ HEADER ═══════════ -->
+<div class="top-header">
+  <div>
+    <h1>Seller Feedback Quality Signals — Documentation Pack</h1>
+    <p>Unified Seller Feedback Intelligence · Walmart Marketplace</p>
+  </div>
+  <div class="header-right">
+    <span class="header-badge">FY27 AOP Aligned</span>
+    <div class="meta">34,800+ signals · 7 sources · 12 dashboard tabs · March 2026</div>
+  </div>
+</div>
+
+<!-- ═══════════ PRIMARY TABS ═══════════ -->
+<div class="primary-tabs">
+  <button class="ptab active" onclick="showPrimary('toc')"><span class="icon">📑</span> Table of Contents</button>
+  <button class="ptab" onclick="showPrimary('overview')"><span class="icon">🏠</span> Initiative Overview</button>
+  <button class="ptab" onclick="showPrimary('requirements')"><span class="icon">📋</span> Requirements Deep Dive</button>
+  <button class="ptab" onclick="showPrimary('playbook')"><span class="icon">🎯</span> Playbook</button>
+  <button class="ptab" onclick="showPrimary('faq')"><span class="icon">❓</span> FAQ</button>
+</div>
+
+<div class="page-wrap">
+
+<!-- ╔══════════════════════════════════════════════════════════════╗
+     ║  TAB 0: TABLE OF CONTENTS                                    ║
+     ╚══════════════════════════════════════════════════════════════╝ -->
+<div id="panel-toc" class="tab-panel active">
+
+  <div class="card">
+    <h2>📑 Documentation Guide</h2>
+    <p>This documentation pack covers the full Seller Feedback Quality Signals dashboard initiative — from executive narrative through requirements to operational playbook. Click any section below to navigate directly.</p>
+  </div>
+
+  <h3 style="margin:0 0 16px; color:var(--blue); font-size:1rem;">🏠 Tab 1: Initiative Overview</h3>
+  <div class="toc-grid" style="margin-bottom:28px;">
+    <div class="toc-item" onclick="showPrimary('overview'); showSub('overview','ov-narrative')">
+      <div class="toc-num">1.1</div><div class="toc-name">Leadership Narrative</div>
+      <div class="toc-desc">Problem → Evolution → Solution story for executive audiences. Top 5 issue clusters.</div>
+    </div>
+    <div class="toc-item" onclick="showPrimary('overview'); showSub('overview','ov-arch')">
+      <div class="toc-num">1.2</div><div class="toc-name">Architecture & Data Flow</div>
+      <div class="toc-desc">5 Mermaid diagrams: end-to-end data flow, data processing workflow, taxonomy mapping pipeline, dashboard architecture, paper cut scoring engine.</div>
+    </div>
+    <div class="toc-item" onclick="showPrimary('overview'); showSub('overview','ov-trust')">
+      <div class="toc-num">1.3</div><div class="toc-name">Why This Is Trustworthy</div>
+      <div class="toc-desc">Six pillars of data integrity: multi-source triangulation, transparent methodology, PII redaction.</div>
+    </div>
+    <div class="toc-item" onclick="showPrimary('overview'); showSub('overview','ov-timeline')">
+      <div class="toc-num">1.4</div><div class="toc-name">Evolution Timeline</div>
+      <div class="toc-desc">v1 (4 tabs, 4 sources) → v2 (12 tabs, 7 sources). Git commit history & version comparison.</div>
+    </div>
+  </div>
+
+  <h3 style="margin:0 0 16px; color:var(--blue); font-size:1rem;">📋 Tab 2: Requirements Deep Dive</h3>
+  <div class="toc-grid" style="margin-bottom:28px;">
+    <div class="toc-item" onclick="showPrimary('requirements'); showSub('requirements','req-personas')">
+      <div class="toc-num">2.1</div><div class="toc-name">Personas & Data Sources</div>
+      <div class="toc-desc">6 personas, 7 data sources with periods, volumes, and key fields.</div>
+    </div>
+    <div class="toc-item" onclick="showPrimary('requirements'); showSub('requirements','req-stories')">
+      <div class="toc-num">2.2</div><div class="toc-name">User Stories & Acceptance Criteria</div>
+      <div class="toc-desc">All 12 dashboard tabs: epics, features, INVEST user stories, testable AC, telemetry.</div>
+    </div>
+    <div class="toc-item" onclick="showPrimary('requirements'); showSub('requirements','req-deps')">
+      <div class="toc-num">2.3</div><div class="toc-name">Dependencies & Edge Cases</div>
+      <div class="toc-desc">6 cross-tab dependencies, 8 edge cases with expected fallback behavior.</div>
+    </div>
+    <div class="toc-item" onclick="showPrimary('requirements'); showSub('requirements','req-build')">
+      <div class="toc-num">2.4</div><div class="toc-name">Build Sequence</div>
+      <div class="toc-desc">Git commit evolution, v1→v2 comparison, recommended 6-phase greenfield build order.</div>
+    </div>
+  </div>
+
+  <h3 style="margin:0 0 16px; color:var(--blue); font-size:1rem;">🎯 Tab 3: Playbook</h3>
+  <div class="toc-grid" style="margin-bottom:28px;">
+    <div class="toc-item" onclick="showPrimary('playbook'); showSub('playbook','pb-access')">
+      <div class="toc-num">3.1</div><div class="toc-name">Access, Roles & Filters</div>
+      <div class="toc-desc">6 roles, permissions matrix, 8-level cascading filter hierarchy.</div>
+    </div>
+    <div class="toc-item" onclick="showPrimary('playbook'); showSub('playbook','pb-workflows')">
+      <div class="toc-num">3.2</div><div class="toc-name">Daily & Weekly Workflows</div>
+      <div class="toc-desc">5-10 min daily check-in, 30 min weekly deep-dive with step-by-step navigation.</div>
+    </div>
+    <div class="toc-item" onclick="showPrimary('playbook'); showSub('playbook','pb-confidence')">
+      <div class="toc-num">3.3</div><div class="toc-name">Confidence & Source Bias</div>
+      <div class="toc-desc">High / Medium / Low interpretation guide with recommended actions and source bias cards.</div>
+    </div>
+    <div class="toc-item" onclick="showPrimary('playbook'); showSub('playbook','pb-recipes')">
+      <div class="toc-num">3.4</div><div class="toc-name">Insight → Action Recipes</div>
+      <div class="toc-desc">7 step-by-step playbooks: bug fix sprints, VoS escalations, AOP cases, PER triage, quarterly briefs.</div>
+    </div>
+    <div class="toc-item" onclick="showPrimary('playbook'); showSub('playbook','pb-ref')">
+      <div class="toc-num">3.5</div><div class="toc-name">Quick Reference Card</div>
+      <div class="toc-desc">Paper cut thresholds, confidence guide, VoS statuses, 10 tracks, key AOP IDs, limitations.</div>
+    </div>
+  </div>
+
+  <h3 style="margin:0 0 16px; color:var(--blue); font-size:1rem;">❓ Tab 4: FAQ</h3>
+  <div class="toc-grid">
+    <div class="toc-item" onclick="showPrimary('faq'); showSub('faq','faq-data')">
+      <div class="toc-num">4.1</div><div class="toc-name">Data Sources FAQ</div>
+      <div class="toc-desc">Where data comes from, collection methods, update frequency, known biases.</div>
+    </div>
+    <div class="toc-item" onclick="showPrimary('faq'); showSub('faq','faq-methodology')">
+      <div class="toc-num">4.2</div><div class="toc-name">Methodology & Scoring</div>
+      <div class="toc-desc">Track mapping, paper cut formula, PER vs Paper Cuts, VoS statuses, limitations.</div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ╔══════════════════════════════════════════════════════════════╗
+     ║  TAB 1: INITIATIVE OVERVIEW                                   ║
+     ╚══════════════════════════════════════════════════════════════╝ -->
+<div id="panel-overview" class="tab-panel">
+
+  <div class="sub-nav" id="subnav-overview">
+    <button class="sub-btn active" onclick="showSub('overview','ov-narrative')">Leadership Narrative</button>
+    <button class="sub-btn" onclick="showSub('overview','ov-arch')">Architecture & Data Flow</button>
+    <button class="sub-btn" onclick="showSub('overview','ov-trust')">Why This Is Trustworthy</button>
+    <button class="sub-btn" onclick="showSub('overview','ov-timeline')">Evolution Timeline</button>
+  </div>
+
+  <!-- ── 1.1 NARRATIVE ── -->
+  <div id="sub-ov-narrative" class="sub-panel active">
+    <div class="kpi-row">
+      <div class="kpi red"><div class="kpi-value">34,800+</div><div class="kpi-label">Total Signals</div></div>
+      <div class="kpi"><div class="kpi-value">7</div><div class="kpi-label">Data Sources</div></div>
+      <div class="kpi orange"><div class="kpi-value">12</div><div class="kpi-label">Dashboard Tabs</div></div>
+      <div class="kpi green"><div class="kpi-value">10</div><div class="kpi-label">Product Tracks</div></div>
+      <div class="kpi yellow"><div class="kpi-value">15</div><div class="kpi-label">Paper Cuts</div></div>
+      <div class="kpi red"><div class="kpi-value">5</div><div class="kpi-label">No AOP Coverage</div></div>
+    </div>
+
+    <div class="card">
+      <h2>The Problem</h2>
+      <p>Walmart Marketplace seller feedback was fragmented across 7 disconnected systems. ASUS forms captured structured input, Reddit revealed unfiltered frustrations, doorbell surveys sampled in-app sentiment, VoS escalations tracked the loudest voices, PER Jira logged emergencies, support tickets measured resolution rates, and the Seller Forum hosted community discussion. <strong>No single team had a unified view.</strong></p>
+      <p>Product managers relied on their own source. VPs received conflicting narratives. Investment decisions were made on partial signal, with no way to confirm whether a pain point in ASUS also showed up in Reddit, support cases, and the forum simultaneously.</p>
+    </div>
+
+    <div class="card">
+      <h2>The Evolution</h2>
+      <p><strong>Version 1</strong> began as a 4-source proof-of-concept — unifying ASUS, Reddit, Doorbell, and Support Case data into a single executive dashboard with 33,540 signals across 4 tabs. Keyword-based track mapping using a 200+ term dictionary assigned each signal to one of 10 Product Tracks in a Track → Topic → Subtopic hierarchy. For the first time, a VP could see that "Item Setup" was not just a top ASUS complaint but also the most-discussed Reddit topic and the most-common support case category.</p>
+      <p><strong>Version 2</strong> expanded to 7 data sources and 12 tabs. It added Voice of Seller (139 escalated issues), Product ER (194 Jira issues), and Seller Forum (483 threads, 1,300+ comments). The Paper Cuts Intelligence layer introduced a composite scoring model that ranks the top 15 chronic friction issues across 6 weighted dimensions. The AOP Alignment tab maps every pain signal to FY27 initiative IDs, revealing 5 paper cuts with no current AOP coverage.</p>
+    </div>
+
+    <div class="card">
+      <h2>The Solution Today</h2>
+      <p>The dashboard now provides <strong>34,800+ signals from 7 sources</strong>, mapped to 10 Product Tracks via a 3-level taxonomy. It serves 6 personas. The Paper Cut scoring model replaces anecdotal prioritization with a repeatable, transparent formula. The AOP Alignment view transforms planning conversations from "what should we invest in" to "here is where seller pain is not covered by current investments." Cross-source convergence flags (3+ independent sources confirming the same pain point) provide the confidence layer that executives need to act.</p>
+
+      <h3>Top 5 Issue Clusters</h3>
+      <table>
+        <thead><tr><th>#</th><th>Cluster</th><th>Signals</th><th>Severity</th><th>AOP Status</th><th>AOP IDs</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><strong>Item Setup & Catalog Management</strong></td><td>8,198</td><td><span class="sev-critical">CRITICAL</span></td><td><span class="tag tag-green">Covered</span></td><td>27009, 27022, 27023, 27029</td></tr>
+          <tr><td>2</td><td><strong>Platform UX, Stability & Performance</strong></td><td>3,064</td><td><span class="sev-high">HIGH</span></td><td><span class="tag tag-orange">Partial</span></td><td>27020</td></tr>
+          <tr><td>3</td><td><strong>Support Response Quality & Case Mgmt</strong></td><td>2,934</td><td><span class="sev-high">HIGH</span></td><td><span class="tag tag-orange">Partial</span></td><td>27019, 27044 (tooling only)</td></tr>
+          <tr><td>4</td><td><strong>Order Management & Fulfillment</strong></td><td>2,801</td><td><span class="sev-med">MEDIUM</span></td><td><span class="tag tag-green">Covered</span></td><td>27002, 27016, 27017, 27036</td></tr>
+          <tr><td>5</td><td><strong>Payments, Financial Reporting & Transparency</strong></td><td>1,158</td><td><span class="sev-med">MEDIUM</span></td><td><span class="tag tag-green">Covered</span></td><td>27003, 27007, 27018, 27038</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── 1.2 ARCHITECTURE ── -->
+  <div id="sub-ov-arch" class="sub-panel">
+    <div class="card">
+      <h2>End-to-End Data Flow</h2>
+      <p>7 independent data sources feed through a processing layer (keyword extraction, track mapping, sentiment analysis, PII redaction, paper cut scoring) into the 12-tab dashboard.</p>
+      <div class="mermaid">
+graph LR
+    subgraph Sources["📥 Data Sources (7)"]
+        A1["ASUS Feedback\n~23,000+"]
+        A2["Reddit\n~2,500+"]
+        A3["Doorbell\n~5,000+"]
+        A4["VoS\n139 issues"]
+        A5["PER Jira\n194 issues"]
+        A6["Support Cases\n~3,000+"]
+        A7["Seller Forum\n~483 threads"]
+    end
+    subgraph Processing["⚙️ Processing Layer"]
+        B1["Keyword Extraction\n200+ term dictionary"]
+        B2["Track Mapping\n10 Product Tracks"]
+        B3["Sentiment Analysis"]
+        B4["PII Redaction"]
+        B5["Paper Cut Scoring\n6 dimensions"]
+    end
+    subgraph Dash["📊 Dashboard (12 tabs)"]
+        C1["Executive Overview"]
+        C2["Track Explorer"]
+        C3["Paper Cuts Intelligence"]
+        C4["AOP Alignment"]
+        C5["Verbatim Evidence"]
+        C6["Voice of Seller"]
+        C7["Product ER"]
+        C8["+ 5 more tabs"]
+    end
+    A1 & A2 & A3 & A4 & A5 & A6 & A7 --> B1
+    B1 --> B2 --> B3 --> B4 --> B5
+    B5 --> C1 & C2 & C3 & C4 & C5
+    A4 --> C6
+    A5 --> C7
+    style Sources fill:#E6F2FF,stroke:#0071CE
+    style Processing fill:#FFF8E1,stroke:#FFC220
+    style Dash fill:#e8f5e9,stroke:#28a745
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Taxonomy Mapping Pipeline</h2>
+      <div class="mermaid">
+graph TD
+    S1["Raw Signal Text"] --> S2["Tokenization"]
+    S2 --> S3["Keyword Match\n200+ term dictionary"]
+    S3 --> S4{"Match Found?"}
+    S4 -->|Yes| S5["Assign Track\n(1 of 10)"]
+    S4 -->|No| S6["Unmapped/Other\n(~5-11%)"]
+    S5 --> S7["Assign Topic"]
+    S7 --> S8["Assign Subtopic"]
+    S8 --> S9["Multi-Signal Alignment"]
+    S9 --> S10{"3+ Sources\nAgree?"}
+    S10 -->|Yes| S11["✅ Signal Convergence Flag"]
+    S10 -->|No| S12["Standard Mapping"]
+    S6 --> S13["Manual Review Queue"]
+    style S5 fill:#e8f5e9,stroke:#28a745
+    style S6 fill:#fde8ea,stroke:#dc3545
+    style S11 fill:#FFF8E1,stroke:#FFC220
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Data Processing Workflow</h2>
+      <p>Detailed step-by-step processing workflow showing how raw data from each source is ingested, normalized, classified, and stored before rendering in the dashboard.</p>
+      <div class="mermaid">
+graph LR
+    subgraph Ingest["1️⃣ Data Ingestion"]
+        I1["CSV / XLSX\nExport"]
+        I2["API Pull\n(Reddit, Forum)"]
+        I3["Jira Export\n(PER)"]
+        I4["Survey Export\n(VoS, Doorbell)"]
+    end
+    subgraph Normalize["2️⃣ Normalize"]
+        N1["Schema Alignment\n(unified columns)"]
+        N2["Date Parsing\n& Standardization"]
+        N3["Text Cleaning\n& UTF-8 Encoding"]
+        N4["PII Auto-Redaction\n(emails, phones, IDs)"]
+    end
+    subgraph Classify["3️⃣ Classify"]
+        C1["Keyword Extraction\n200+ term dictionary"]
+        C2["Track Assignment\n10 Product Tracks"]
+        C3["Topic → Subtopic\n3-level taxonomy"]
+        C4["Sentiment Scoring\nPositive / Neutral / Negative"]
+    end
+    subgraph Enrich["4️⃣ Enrich & Score"]
+        E1["Cross-Source\nConvergence Check"]
+        E2["Paper Cut Scoring\n6-dimension composite"]
+        E3["AOP ID Mapping\nFY27 initiative alignment"]
+        E4["Confidence Rating\nHigh / Medium / Low"]
+    end
+    subgraph Render["5️⃣ Dashboard Render"]
+        R1["Embed in HTML\n(self-contained)"]
+        R2["Chart.js\nVisualizations"]
+        R3["Interactive Filters\n& Drill-down"]
+    end
+    I1 & I2 & I3 & I4 --> N1
+    N1 --> N2 --> N3 --> N4
+    N4 --> C1
+    C1 --> C2 --> C3 --> C4
+    C4 --> E1
+    E1 --> E2 --> E3 --> E4
+    E4 --> R1
+    R1 --> R2 --> R3
+    style Ingest fill:#E6F2FF,stroke:#0071CE
+    style Normalize fill:#f3e8ff,stroke:#8e44ad
+    style Classify fill:#FFF8E1,stroke:#FFC220
+    style Enrich fill:#e8f5e9,stroke:#28a745
+    style Render fill:#fde8ea,stroke:#dc3545
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Dashboard Architecture</h2>
+      <p>Component architecture showing how the self-contained HTML dashboard is structured — from the presentation layer through data binding to the embedded data store.</p>
+      <div class="mermaid">
+graph TD
+    subgraph Presentation["🖥️ Presentation Layer"]
+        P1["Header Bar\n(branding, KPI badges)"]
+        P2["Tab Navigation\n(12 tab buttons)"]
+        P3["Filter Bar\n(Track, Source, Date, Severity)"]
+    end
+    subgraph Views["📊 View Components (12 Tabs)"]
+        V1["Table of Contents"]
+        V2["Executive Overview\n(KPI cards, charts)"]
+        V3["Track Explorer\n(3-level drill-down)"]
+        V4["Track Map\n(heatmap grid)"]
+        V5["AOP Alignment\n(gap analysis table)"]
+        V6["Paper Cuts Intelligence\n(scoring, heatmap, sparklines)"]
+        V7["Verbatim Evidence\n(PII-redacted search)"]
+        V8["Track Crosswalk\n(legacy → official mapping)"]
+        V9["Voice of Seller\n(status tracking)"]
+        V10["Product ER\n(Jira status board)"]
+        V11["Seller Forum\n(threads + CSV export)"]
+        V12["FAQ / Methodology"]
+    end
+    subgraph Logic["⚙️ JavaScript Logic Layer"]
+        L1["showTab() — Tab switching"]
+        L2["initPaperCuts() — Scoring engine"]
+        L3["filterExplorer() — Cascading filters"]
+        L4["redactPII() — Auto-redaction"]
+        L5["exportCSV() — Data export"]
+        L6["Chart.js — Chart rendering"]
+    end
+    subgraph Data["💾 Embedded Data Store"]
+        D1["trackData{}\n10 tracks × topics × subtopics"]
+        D2["paperCutData[]\n15 scored issues"]
+        D3["aopMapping{}\nFY27 initiative IDs"]
+        D4["vosIssues[]\n139 escalations"]
+        D5["perIssues[]\n194 Jira items"]
+        D6["forumThreads[]\n483 threads"]
+    end
+    P1 --> P2 --> P3
+    P3 --> V2 & V3 & V4 & V5 & V6 & V7
+    V1 -.->|"navigate"| V2
+    V2 --> L6
+    V3 --> L3
+    V6 --> L2
+    V7 --> L4
+    V11 --> L5
+    L1 --> V1 & V2 & V3 & V4 & V5 & V6 & V7 & V8 & V9 & V10 & V11 & V12
+    L2 --> D2
+    L3 --> D1
+    L6 --> D1 & D2 & D3
+    L4 --> D1
+    L5 --> D6
+    V9 --> D4
+    V10 --> D5
+    style Presentation fill:#E6F2FF,stroke:#0071CE
+    style Views fill:#FFF8E1,stroke:#FFC220
+    style Logic fill:#f3e8ff,stroke:#8e44ad
+    style Data fill:#e8f5e9,stroke:#28a745
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Paper Cut Scoring Engine</h2>
+      <div class="formula"><strong>pc_score = </strong>(recurrence × 0.25) + (breadth × 0.20) + (persistence × 0.20) + (friction_signal × 0.20) + (support_burden × 0.10) + (source_diversity × 0.05)</div>
+      <div class="mermaid">
+graph LR
+    subgraph Input["📥 Input Signals"]
+        I1["Signal Volume\nper issue"]
+        I2["Unique Sellers\n/ PIDs / Geos"]
+        I3["Time Span\n(weeks present)"]
+        I4["Negative Sentiment\nIntensity"]
+        I5["Support Cases\n& Escalations"]
+        I6["Source Count\n(max 7)"]
+    end
+    subgraph Score["📐 Scoring"]
+        S1["Recurrence\n× 0.25"]
+        S2["Breadth\n× 0.20"]
+        S3["Persistence\n× 0.20"]
+        S4["Friction Signal\n× 0.20"]
+        S5["Support Burden\n× 0.10"]
+        S6["Source Diversity\n× 0.05"]
+        SC["Composite\npc_score"]
+    end
+    subgraph Output["📤 Classification"]
+        O1["Score ≥ 88\n🔴 CRITICAL (5)"]
+        O2["Score ≥ 70\n🟠 PAPER CUT (15)"]
+        O3["Score < 70\n⚪ Below threshold"]
+    end
+    I1 --> S1
+    I2 --> S2
+    I3 --> S3
+    I4 --> S4
+    I5 --> S5
+    I6 --> S6
+    S1 & S2 & S3 & S4 & S5 & S6 --> SC
+    SC --> O1 & O2 & O3
+    style Input fill:#E6F2FF,stroke:#0071CE
+    style Score fill:#FFF8E1,stroke:#FFC220
+    style Output fill:#fde8ea,stroke:#dc3545
+      </div>
+      <table>
+        <thead><tr><th>Dimension</th><th>Weight</th><th>Definition</th><th>Scale</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Recurrence</strong></td><td>25%</td><td>Frequency of mentions across all signals and time periods</td><td>0–100 normalized</td></tr>
+          <tr><td><strong>Breadth</strong></td><td>20%</td><td>Number of distinct tracks or topics the issue touches</td><td>0–100 cross-track</td></tr>
+          <tr><td><strong>Persistence</strong></td><td>20%</td><td>How long the issue has been appearing without resolution</td><td>0–100 temporal</td></tr>
+          <tr><td><strong>Friction Signal</strong></td><td>20%</td><td>Intensity of negative sentiment and severity in verbatims</td><td>0–100 NLP-detected</td></tr>
+          <tr><td><strong>Support Burden</strong></td><td>10%</td><td>Volume of support cases and escalations attributable</td><td>0–100 case volume</td></tr>
+          <tr><td><strong>Source Diversity</strong></td><td>5%</td><td>Independent data sources reporting (max 7)</td><td>0–100 (sources/7×100)</td></tr>
+        </tbody>
+      </table>
+      <div class="panel panel-info"><strong>Thresholds:</strong> Score ≥ 70 = Paper Cut (15 identified) · Score ≥ 88 = Critical (5 identified) · 5 paper cuts have no AOP coverage.</div>
+    </div>
+  </div>
+
+  <!-- ── 1.3 TRUST ── -->
+  <div id="sub-ov-trust" class="sub-panel">
+    <div class="card">
+      <h2>Why This Dashboard Is Trustworthy</h2>
+      <p>Six pillars of data integrity and analytical rigor underpin every insight:</p>
+    </div>
+    <div class="grid-3">
+      <div class="mini-card">
+        <h4>1. Multi-Source Triangulation</h4>
+        <p>7 independent sources with different collection methods. When 3+ converge on the same pain point, the "Signal Convergence" flag activates — eliminating single-source bias.</p>
+      </div>
+      <div class="mini-card">
+        <h4>2. Transparent Methodology</h4>
+        <p>200+ keyword dictionary is documented. Paper cut formula and all 6 dimension weights are published in the FAQ tab. Any stakeholder can audit how a score was calculated.</p>
+      </div>
+      <div class="mini-card">
+        <h4>3. Known Limitations Documented</h4>
+        <p>6 limitations explicitly listed: keyword mapping gaps (~5-11% unmapped), Reddit vocal bias, VoS selection bias, temporal gaps, no cross-dedup, forum vocal skew.</p>
+      </div>
+      <div class="mini-card">
+        <h4>4. Confidence Framework</h4>
+        <p>Every paper cut carries a confidence rating (High/Medium/Low) based on source agreement and signal volume. Users can filter to "High confidence only" for investment decisions.</p>
+      </div>
+      <div class="mini-card">
+        <h4>5. PII Redaction</h4>
+        <p>Automatic PII redaction replaces emails, phone numbers, and partner IDs with placeholder tokens before rendering. Compliance ensured without restricting evidence access.</p>
+      </div>
+      <div class="mini-card">
+        <h4>6. Reproducible Scoring</h4>
+        <p>The paper cut score is deterministic — same inputs always produce same scores. The 6-dimension breakdown shows exactly which dimensions drive each score. No black box.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Confidence Levels</h2>
+      <table>
+        <thead><tr><th>Level</th><th>Criteria</th><th>Interpretation</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag tag-green">HIGH</span></td><td>3+ independent sources agree</td><td>Cross-validated. Safe to act on directly.</td></tr>
+          <tr><td><span class="tag tag-yellow">MEDIUM</span></td><td>2 sources agree, 100+ signals</td><td>Probable. Validate with one more source before major investment.</td></tr>
+          <tr><td><span class="tag tag-red">LOW</span></td><td>Single source only</td><td>May be source-specific bias. Investigate further before prioritizing.</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Track Mapping Methodology (3-Step Process)</h3>
+      <div class="panel panel-trust">
+        <ol>
+          <li><strong>Keyword Extraction:</strong> Signal text tokenized, matched against 200+ term dictionary mapped to 25 official Product Tracks (consolidated to 10).</li>
+          <li><strong>Multi-Signal Alignment:</strong> Each source mapped independently, then cross-referenced. 3+ sources on same Track–Topic → "Signal Convergence" flag.</li>
+          <li><strong>Unmapped Handling:</strong> ~11% PER issues and ~5% other signals → "Unmapped/Other" for manual review by track owners.</li>
+        </ol>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 1.4 TIMELINE ── -->
+  <div id="sub-ov-timeline" class="sub-panel">
+    <div class="card">
+      <h2>Evolution: v1 → v2</h2>
+      <div class="timeline">
+        <div class="tl-item"><div class="tl-date">Phase 1 — Foundation</div><div class="tl-title">Repository Setup & Data Upload</div><div class="tl-desc">Repository created. Raw data files for ASUS Feedback, Reddit scrapes, Doorbell survey exports, and Support Case extracts uploaded. Baseline data layer established.</div></div>
+        <div class="tl-item"><div class="tl-date">Phase 2 — Version 1 (seller_feedback_dashboard.html)</div><div class="tl-title">4 Tabs · 4 Sources · 33,540 Signals</div><div class="tl-desc">Executive Overview, Track Explorer, Track Map, FY27 AOP Alignment. Unified ASUS, Reddit, Doorbell, Support Cases. Keyword taxonomy applied. Delivered as proof-of-concept.</div></div>
+        <div class="tl-item"><div class="tl-date">Phase 3 — Paper Cuts Layer</div><div class="tl-title">Analytical Intelligence Added</div><div class="tl-desc">Paper Cuts Intelligence tab with 6-dimension scoring model. 15 paper cuts identified (5 critical). Heatmap, sparklines, and verbatim drilldown panels built.</div></div>
+        <div class="tl-item"><div class="tl-date">Phase 4 — Source Expansion</div><div class="tl-title">VoS, PER Jira, Seller Forum Integrated</div><div class="tl-desc">3 new data sources: VoS (139 escalations), PER (194 Jira issues), Seller Forum (483 threads, 1,300+ comments). Sources 4 → 7. Signals 33,540 → 34,800+.</div></div>
+        <div class="tl-item"><div class="tl-date">Phase 5 — Stabilization</div><div class="tl-title">Bug Fixes, JS Validation, Revert & Rebuild</div><div class="tl-desc">Resolved duplicate function definitions and broken overrides. Reverted to known-good build. Rebuilt VoS/PER/FAQ with validated JS. Navigation redesigned for 12 tabs.</div></div>
+        <div class="tl-item"><div class="tl-date">Phase 6 — Version 2 (index.html) — Current</div><div class="tl-title">12 Tabs · 7 Sources · 34,800+ Signals</div><div class="tl-desc">Table of Contents as dedicated tab. Seller Forum with engagement metrics and CSV export. VoS FAQ enhancements. Full production build deployed.</div></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Version Comparison</h2>
+      <table>
+        <thead><tr><th>Dimension</th><th>Version 1</th><th>Version 2</th><th>Delta</th></tr></thead>
+        <tbody>
+          <tr><td>Data Sources</td><td>4</td><td>7</td><td style="color:var(--green);font-weight:700">+3</td></tr>
+          <tr><td>Total Signals</td><td>33,540</td><td>34,800+</td><td style="color:var(--green);font-weight:700">+1,260+</td></tr>
+          <tr><td>Dashboard Tabs</td><td>4</td><td>12</td><td style="color:var(--green);font-weight:700">+8</td></tr>
+          <tr><td>Paper Cuts Identified</td><td>0</td><td>15</td><td style="color:var(--green);font-weight:700">+15</td></tr>
+          <tr><td>AOP IDs Mapped</td><td>Basic</td><td>Full w/ gap analysis</td><td style="color:var(--green);font-weight:700">Significant</td></tr>
+          <tr><td>PII Redaction</td><td>No</td><td>Yes (auto)</td><td style="color:var(--green);font-weight:700">Added</td></tr>
+          <tr><td>Scoring Model</td><td>No</td><td>6-dim composite</td><td style="color:var(--green);font-weight:700">Added</td></tr>
+          <tr><td>CSV Export</td><td>No</td><td>Yes (Forum)</td><td style="color:var(--green);font-weight:700">Added</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Git Commit History</h2>
+      <table>
+        <thead><tr><th>#</th><th>Commit</th><th>What Changed</th><th>Impact</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td>Initial commit</td><td>Repository scaffolding</td><td>Baseline</td></tr>
+          <tr><td>2</td><td>Add files via upload</td><td>Raw data files (ASUS, Reddit, Doorbell, Support)</td><td>Data layer</td></tr>
+          <tr><td>3</td><td>feat: Paper Cuts Intelligence layer</td><td>6-dim scoring, top 15, filter/drill UI</td><td>Core analytics</td></tr>
+          <tr><td>4</td><td>chore: merge + conflict resolution</td><td>index.html conflict fix</td><td>Stability</td></tr>
+          <tr><td>5</td><td>feat: VoS, PER, sentiment, FAQ</td><td>3 new sources; FAQ tab</td><td>Sources 4→7</td></tr>
+          <tr><td>6</td><td>fix: duplicate showTab + broken overrides</td><td>JS function dedup, init fixes</td><td>Critical fix</td></tr>
+          <tr><td>7</td><td>feat: VoS, PER, FAQ tabs + 2-row nav</td><td>Nav redesign for 12 tabs</td><td>UX improvement</td></tr>
+          <tr><td>8</td><td>revert: restore working build</td><td>Rollback after regression</td><td>Recovery</td></tr>
+          <tr><td>9</td><td>feat: VoS + PER + FAQ — validated JS</td><td>Stable rebuild with syntax validation</td><td>Reliability</td></tr>
+          <tr><td>10</td><td>feat: Table of Contents section</td><td>ToC in Executive Overview</td><td>Navigation</td></tr>
+          <tr><td>11</td><td>refactor: ToC to dedicated tab</td><td>Separated ToC; cleaned Exec Overview</td><td>Architecture</td></tr>
+          <tr><td>12</td><td>feat: Seller Forum + export + VoS FAQ</td><td>Forum (483 threads), CSV export</td><td>Final v2</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!-- ╔══════════════════════════════════════════════════════════════╗
+     ║  TAB 2: REQUIREMENTS DEEP DIVE                                ║
+     ╚══════════════════════════════════════════════════════════════╝ -->
+<div id="panel-requirements" class="tab-panel">
+
+  <div class="sub-nav" id="subnav-requirements">
+    <button class="sub-btn active" onclick="showSub('requirements','req-personas')">Personas & Data Sources</button>
+    <button class="sub-btn" onclick="showSub('requirements','req-stories')">User Stories & AC</button>
+    <button class="sub-btn" onclick="showSub('requirements','req-deps')">Dependencies & Edge Cases</button>
+    <button class="sub-btn" onclick="showSub('requirements','req-build')">Build Sequence</button>
+  </div>
+
+  <!-- ── 2.1 PERSONAS ── -->
+  <div id="sub-req-personas" class="sub-panel active">
+    <div class="card">
+      <h2>Personas</h2>
+      <table>
+        <thead><tr><th>Persona</th><th>Role Context</th><th>Primary Tabs</th><th>Key Need</th></tr></thead>
+        <tbody>
+          <tr><td><strong>VP / Directors</strong></td><td>Executive leadership, quarterly reviews</td><td><span class="tag tag-blue">Executive Overview</span> <span class="tag tag-blue">Track Map</span></td><td>Severity trends, strategic risk flags</td></tr>
+          <tr><td><strong>Product Managers</strong></td><td>Track owners, backlog prioritization</td><td><span class="tag tag-blue">Track Explorer</span> <span class="tag tag-blue">Paper Cuts</span></td><td>Drill into Track→Topic→Subtopic with verbatims</td></tr>
+          <tr><td><strong>PM Leads / Engineering</strong></td><td>Technical leads, sprint planning</td><td><span class="tag tag-blue">Paper Cuts Intelligence</span> <span class="tag tag-blue">Verbatim Evidence</span></td><td>Scored friction issues, root cause evidence</td></tr>
+          <tr><td><strong>Leadership / Strategy</strong></td><td>Strategic planning, portfolio alignment</td><td><span class="tag tag-blue">Track Map</span> <span class="tag tag-blue">AOP Alignment</span></td><td>Visual portfolio view, gap analysis</td></tr>
+          <tr><td><strong>VP / Planning</strong></td><td>Annual planning, investment decisions</td><td><span class="tag tag-blue">AOP Alignment</span></td><td>Coverage gaps mapped to FY27 AOP initiative IDs</td></tr>
+          <tr><td><strong>Support Operations</strong></td><td>Case escalation, issue triage</td><td><span class="tag tag-blue">Verbatim Evidence</span> <span class="tag tag-blue">Product ER</span></td><td>Search raw quotes (PII-redacted); PER issue statuses</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Data Sources</h2>
+      <table>
+        <thead><tr><th>Source</th><th>Type</th><th>Period</th><th>Volume</th><th>Key Fields</th></tr></thead>
+        <tbody>
+          <tr><td><strong>ASUS Feedback</strong></td><td>Seller Center forms</td><td>May 2024 – Mar 2026</td><td>~23,000+</td><td>Partner ID, Tracks, Features, Message, Date, Topic, Sub Topic</td></tr>
+          <tr><td><strong>Reddit r/WalmartSellers</strong></td><td>Reddit API / scraping</td><td>Jun 2025 – Mar 2026</td><td>~2,500+</td><td>uniq_id, Date, Summary, Upvotes, Sentiment, Virality Score</td></tr>
+          <tr><td><strong>Doorbell Surveys</strong></td><td>In-app surveys</td><td>Rolling 12 months</td><td>~5,000+</td><td>rating, verbatim, page context</td></tr>
+          <tr><td><strong>Voice of Seller (VoS)</strong></td><td>NPS/OSAT, MAT calls, CBB</td><td>FY26 Q1 – Q4</td><td>139 escalated</td><td>Issue, Status, Action Plan, Track mapping</td></tr>
+          <tr><td><strong>Product ER (PER Jira)</strong></td><td>PRODER Jira project</td><td>Sep 2024 – Jan 2026</td><td>194 issues</td><td>Issue key, Status, Summary, Severity</td></tr>
+          <tr><td><strong>Support Cases</strong></td><td>Seller support tickets</td><td>Rolling 6 months</td><td>~3,000+</td><td>category, resolution, CSAT</td></tr>
+          <tr><td><strong>Seller Forum (MP Learn)</strong></td><td>Community forum</td><td>Ongoing</td><td>~483 threads / 1,300+ comments</td><td>discussionID, name, body, sentiment, tags, countViews</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── 2.2 USER STORIES ── -->
+  <div id="sub-req-stories" class="sub-panel">
+    <div class="card">
+      <h2>Capabilities & User Stories — Tabs 1–6</h2>
+      <div class="scroll-wrap">
+      <table>
+        <thead><tr><th style="width:4%">#</th><th style="width:12%">Epic / Tab</th><th style="width:15%">Features</th><th style="width:22%">User Stories</th><th style="width:22%">Acceptance Criteria</th><th style="width:12%">Telemetry</th><th style="width:10%">Personas</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="2"><strong>1</strong></td><td rowspan="2"><strong>Table of Contents</strong><br><span class="tag tag-gray">Nav</span></td><td>Section index w/ audience tags</td><td>As any user, I want a quick-reference guide to all sections so I can jump to relevant content.</td><td><ul class="ac-list"><li>All 12 tabs listed with descriptions</li><li>Each tagged with target persona</li><li>Click-to-navigate links work</li></ul></td><td>Clicks per link</td><td><span class="tag tag-blue">All</span></td></tr>
+          <tr><td>Data source legend</td><td>As a PM, I want to see which sources feed each tab so I can assess completeness.</td><td><ul class="ac-list"><li>Source labels per tab row</li><li>Volume counts displayed</li></ul></td><td>Hover events</td><td><span class="tag tag-blue">PM</span></td></tr>
+
+          <tr><td rowspan="3"><strong>2</strong></td><td rowspan="3"><strong>Executive Overview</strong><br><span class="tag tag-red">Critical</span></td><td>Top-line KPI cards</td><td>As a VP, I want signal count, source count, critical alerts at a glance so I can assess feedback health.</td><td><ul class="ac-list"><li>4+ KPIs with current data</li><li>Critical count flagged red if >0</li></ul></td><td>Page views; KPI clicks</td><td><span class="tag tag-blue">VP/Dir</span></td></tr>
+          <tr><td>Pain theme summary</td><td>As a Director, I want top 5 pain themes ranked by volume so I can prioritize discussions.</td><td><ul class="ac-list"><li>Top 5 with volume, severity, AOP status</li><li>Click-through to Track Explorer</li></ul></td><td>Theme expansion clicks</td><td><span class="tag tag-blue">VP/Dir</span></td></tr>
+          <tr><td>Volume trends & severity</td><td>As a VP, I want monthly trends and severity distribution to spot escalations early.</td><td><ul class="ac-list"><li>Time-series chart by month</li><li>Severity breakdown chart</li><li>Alerts for MoM spikes >20%</li></ul></td><td>Chart interactions</td><td><span class="tag tag-blue">VP/Dir</span></td></tr>
+
+          <tr><td rowspan="3"><strong>3</strong></td><td rowspan="3"><strong>Track Explorer</strong><br><span class="tag tag-red">Critical</span></td><td>3-level drill-down</td><td>As a PM, I want to drill Track→Topic→Subtopic to find specific pain points within my track.</td><td><ul class="ac-list"><li>10 tracks with signal counts</li><li>Expand shows topics, then subtopics</li><li>3-level taxonomy navigable</li></ul></td><td>Drill-depth reached</td><td><span class="tag tag-blue">PM</span></td></tr>
+          <tr><td>Signal volume bars</td><td>As a PM, I want visual bars per node to quickly compare pain intensity.</td><td><ul class="ac-list"><li>Bar proportional to count</li><li>Hover shows source breakdown</li></ul></td><td>Hover events</td><td><span class="tag tag-blue">PM</span></td></tr>
+          <tr><td>Verbatim preview panel</td><td>As a PM, I want sample verbatims on subtopic select to understand seller language.</td><td><ul class="ac-list"><li>3-5 verbatims displayed</li><li>Source + date shown</li><li>PII auto-redacted</li></ul></td><td>Panel open rate</td><td><span class="tag tag-blue">PM</span></td></tr>
+
+          <tr><td rowspan="2"><strong>4</strong></td><td rowspan="2"><strong>Track Map</strong><br><span class="tag tag-yellow">High</span></td><td>Visual treemap/heatmap</td><td>As a Strategy Lead, I want a treemap where tile size = volume and color = severity.</td><td><ul class="ac-list"><li>10 tracks as tiles</li><li>Area proportional to volume</li><li>Color = severity (red/orange/yellow/green)</li></ul></td><td>Tile clicks</td><td><span class="tag tag-blue">VP/Dir</span></td></tr>
+          <tr><td>Severity overlay toggle</td><td>As a VP, I want to toggle between volume-only and severity-overlay views.</td><td><ul class="ac-list"><li>Toggle switches color scheme</li><li>Legend updates</li></ul></td><td>Toggle changes</td><td><span class="tag tag-blue">VP/Dir</span></td></tr>
+
+          <tr><td rowspan="3"><strong>5</strong></td><td rowspan="3"><strong>FY27 AOP Alignment</strong><br><span class="tag tag-red">Critical</span></td><td>Pain-to-AOP mapping</td><td>As a Planning VP, I want pain signals mapped to AOP initiative IDs to validate investments.</td><td><ul class="ac-list"><li>Each cluster shows AOP IDs (e.g., 27009)</li><li>Coverage: Covered / Partial / No Coverage</li></ul></td><td>AOP ID clicks</td><td><span class="tag tag-blue">VP/Plan</span></td></tr>
+          <tr><td>Coverage gap highlighting</td><td>As a VP, I want uncovered areas highlighted to identify investment gaps.</td><td><ul class="ac-list"><li>Uncovered clusters flagged red</li><li>Sorted by volume descending</li><li>Export-ready gap list</li></ul></td><td>Gap list exports</td><td><span class="tag tag-blue">VP/Plan</span></td></tr>
+          <tr><td>Initiative detail panel</td><td>As a PM, I want to click an AOP ID and see which pain signals it addresses.</td><td><ul class="ac-list"><li>Detail shows initiative, mapped clusters, total signals</li><li>Partial coverage shows unaddressed subtopics</li></ul></td><td>Panel open rate</td><td><span class="tag tag-blue">PM</span></td></tr>
+
+          <tr><td rowspan="3"><strong>6</strong></td><td rowspan="3"><strong>Paper Cuts Intelligence</strong><br><span class="tag tag-red">Critical</span></td><td>Top 15 ranked table</td><td>As a PM Lead, I want top 15 friction issues scored and ranked for prioritization.</td><td><ul class="ac-list"><li>15 paper cuts sorted by score</li><li>Score, severity, confidence, AOP shown</li><li>Critical (≥88) highlighted</li></ul></td><td>Row expansions</td><td><span class="tag tag-blue">PM Lead</span></td></tr>
+          <tr><td>6-dimension breakdown</td><td>As an Eng Lead, I want the scoring breakdown to understand rank drivers.</td><td><ul class="ac-list"><li>Radar/bar chart per paper cut (6 dims)</li><li>Hover shows definition + raw value</li></ul></td><td>Dimension hovers</td><td><span class="tag tag-blue">Eng</span></td></tr>
+          <tr><td>Multi-axis filtering</td><td>As a PM, I want to filter by track, source, score, confidence, AOP, severity.</td><td><ul class="ac-list"><li>6 filter controls operational</li><li>Results update instantly</li><li>Active filter indicators visible</li></ul></td><td>Filter combinations</td><td><span class="tag tag-blue">PM</span></td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Capabilities & User Stories — Tabs 7–12</h2>
+      <div class="scroll-wrap">
+      <table>
+        <thead><tr><th style="width:4%">#</th><th style="width:12%">Epic / Tab</th><th style="width:15%">Features</th><th style="width:22%">User Stories</th><th style="width:22%">Acceptance Criteria</th><th style="width:12%">Telemetry</th><th style="width:10%">Personas</th></tr></thead>
+        <tbody>
+          <tr><td rowspan="3"><strong>7</strong></td><td rowspan="3"><strong>Verbatim Evidence</strong><br><span class="tag tag-yellow">High</span></td><td>Full-text search</td><td>As Support Ops, I want to search all raw seller quotes by keyword.</td><td><ul class="ac-list"><li>Search across all sources</li><li>Results show source, date, track, severity</li></ul></td><td>Search queries</td><td><span class="tag tag-blue">Support</span></td></tr>
+          <tr><td>Filter by track/sentiment/severity</td><td>As a PM, I want to filter verbatims by my track and sentiment polarity.</td><td><ul class="ac-list"><li>Track dropdown (10 tracks)</li><li>Sentiment: Pos/Neutral/Neg</li><li>Combined filters work</li></ul></td><td>Filter combos</td><td><span class="tag tag-blue">PM</span></td></tr>
+          <tr><td>PII auto-redaction</td><td>As compliance, I want PII auto-redacted from displayed verbatims.</td><td><ul class="ac-list"><li>Emails → [EMAIL]</li><li>Phones → [PHONE]</li><li>Partner IDs → [PARTNER_ID]</li></ul></td><td>Redaction count</td><td><span class="tag tag-blue">All</span></td></tr>
+
+          <tr><td rowspan="2"><strong>8</strong></td><td rowspan="2"><strong>Track Crosswalk</strong><br><span class="tag tag-gray">Utility</span></td><td>Old-to-new track mapping</td><td>As a PM, I want legacy names mapped to official 10-track taxonomy.</td><td><ul class="ac-list"><li>Legacy → Official two-column map</li><li>Searchable</li></ul></td><td>Search usage</td><td><span class="tag tag-blue">PM</span></td></tr>
+          <tr><td>Taxonomy coverage indicator</td><td>As an analyst, I want to see mapping coverage % per track.</td><td><ul class="ac-list"><li>% per track</li><li>Unmapped count shown</li><li>Visual bar for ratio</li></ul></td><td>Page views</td><td><span class="tag tag-blue">Analyst</span></td></tr>
+
+          <tr><td rowspan="3"><strong>9</strong></td><td rowspan="3"><strong>Voice of Seller</strong><br><span class="tag tag-yellow">High</span></td><td>Issue table w/ status tracking</td><td>As a VP, I want all 139 VoS issues with resolution status to track our response.</td><td><ul class="ac-list"><li>139 issues with status badges</li><li>5 statuses supported</li><li>Sortable</li></ul></td><td>Status filter usage</td><td><span class="tag tag-blue">VP/Dir</span></td></tr>
+          <tr><td>Track mapping</td><td>As a PM, I want each VoS issue mapped to a Product Track.</td><td><ul class="ac-list"><li>Track column populated</li><li>Filterable by track</li></ul></td><td>Track filters</td><td><span class="tag tag-blue">PM</span></td></tr>
+          <tr><td>Action plan visibility</td><td>As a Director, I want action plans visible to verify team response.</td><td><ul class="ac-list"><li>Expandable rows show action plan</li><li>"Team Unresponsive" flagged red</li></ul></td><td>Expansion clicks</td><td><span class="tag tag-blue">VP/Dir</span></td></tr>
+
+          <tr><td rowspan="2"><strong>10</strong></td><td rowspan="2"><strong>Product ER</strong><br><span class="tag tag-yellow">High</span></td><td>PER Jira issue table</td><td>As Support Ops, I want 194 PRODER issues with status, severity, and track mapping.</td><td><ul class="ac-list"><li>194 issues displayed</li><li>Filterable by status/severity</li><li>Track column via keyword mapping</li></ul></td><td>Filter usage</td><td><span class="tag tag-blue">Support</span></td></tr>
+          <tr><td>PER vs. Paper Cuts link</td><td>As a PM, I want clear differentiation between PER (emergency) and Paper Cuts (chronic).</td><td><ul class="ac-list"><li>PER = "Emergency Response"</li><li>Paper Cuts = "Chronic Friction"</li><li>Cross-reference links</li></ul></td><td>Cross-ref clicks</td><td><span class="tag tag-blue">PM</span></td></tr>
+
+          <tr><td rowspan="2"><strong>11</strong></td><td rowspan="2"><strong>Seller Forum</strong><br><span class="tag tag-blue">New (v2)</span></td><td>Thread & comment browser</td><td>As a PM, I want to browse forum threads with engagement metrics.</td><td><ul class="ac-list"><li>483 threads with comments/views</li><li>Sortable by engagement</li><li>Comment expansion</li></ul></td><td>Thread expansion</td><td><span class="tag tag-blue">PM</span></td></tr>
+          <tr><td>Data export (CSV)</td><td>As an analyst, I want to export filtered forum data as CSV.</td><td><ul class="ac-list"><li>Export button → CSV</li><li>All visible columns included</li><li>Respects active filters</li></ul></td><td>Export events</td><td><span class="tag tag-blue">Analyst</span></td></tr>
+
+          <tr><td rowspan="2"><strong>12</strong></td><td rowspan="2"><strong>FAQ / Methodology</strong><br><span class="tag tag-gray">Reference</span></td><td>Data source documentation</td><td>As any user, I want to understand where data comes from and how it was processed.</td><td><ul class="ac-list"><li>7 sources described: origin, period, volume</li><li>Limitations per source listed</li></ul></td><td>Section scroll depth</td><td><span class="tag tag-blue">All</span></td></tr>
+          <tr><td>Scoring formula explanation</td><td>As an Eng Lead, I want the paper cut formula and dimension weights explained.</td><td><ul class="ac-list"><li>Formula with all 6 weights</li><li>Threshold definitions documented</li></ul></td><td>Section views</td><td><span class="tag tag-blue">Eng</span></td></tr>
+        </tbody>
+      </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 2.3 DEPENDENCIES ── -->
+  <div id="sub-req-deps" class="sub-panel">
+    <div class="card">
+      <h2>Cross-Tab Dependencies</h2>
+      <table>
+        <thead><tr><th>Dependency</th><th>Upstream</th><th>Downstream</th><th>Nature</th></tr></thead>
+        <tbody>
+          <tr><td>Track taxonomy (200+ keyword dictionary)</td><td>Track Crosswalk (#8)</td><td>Track Explorer, Track Map, Paper Cuts, all source tabs</td><td>All drill-downs depend on consistent track mapping</td></tr>
+          <tr><td>Signal volume aggregation</td><td>All 7 data sources</td><td>Executive Overview (#2), Track Map (#4)</td><td>KPI cards and treemap tiles pull from unified signal count</td></tr>
+          <tr><td>Paper Cut scores</td><td>Paper Cuts (#6)</td><td>AOP Alignment (#5)</td><td>AOP gap analysis references paper cut severity and score</td></tr>
+          <tr><td>AOP initiative IDs</td><td>AOP Alignment (#5)</td><td>Paper Cuts (#6)</td><td>Paper cuts display AOP coverage status from AOP mapping</td></tr>
+          <tr><td>PII redaction layer</td><td>Verbatim Evidence (#7)</td><td>Track Explorer verbatim previews, Paper Cuts drilldowns</td><td>Any verbatim display must pass through PII redaction</td></tr>
+          <tr><td>PER vs. Paper Cut cross-reference</td><td>Product ER (#10)</td><td>Paper Cuts (#6)</td><td>PER issues overlapping paper cuts need bidirectional links</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Edge Cases</h2>
+      <table>
+        <thead><tr><th>Edge Case</th><th>Affected Tab(s)</th><th>Expected Behavior</th></tr></thead>
+        <tbody>
+          <tr><td>Signal maps to 0 tracks (unmapped)</td><td>Track Explorer, Track Map</td><td>"Unmapped/Other" category; flagged for manual review. ~5-11% of signals.</td></tr>
+          <tr><td>Signal maps to multiple tracks</td><td>Track Explorer, Paper Cuts</td><td>Counted once per track (multi-count allowed); breadth score increases.</td></tr>
+          <tr><td>VoS issue "Team Unresponsive"</td><td>Voice of Seller</td><td>Row highlighted red; escalation alert; included in Executive Overview alert count.</td></tr>
+          <tr><td>Paper cut score at threshold (70 or 88)</td><td>Paper Cuts Intelligence</td><td>Score 70 = included; Score 88 = Critical. Boundary is inclusive (≥).</td></tr>
+          <tr><td>Reddit temporal gap vs. ASUS</td><td>Executive Overview, Paper Cuts</td><td>Source diversity accounts for availability windows; charts show data availability.</td></tr>
+          <tr><td>Empty filter results</td><td>All filterable tabs</td><td>"No results match your filters" message with clear-filters option.</td></tr>
+          <tr><td>Forum thread with 0 comments</td><td>Seller Forum</td><td>Displayed normally; engagement from views only.</td></tr>
+          <tr><td>Duplicate signals across sources</td><td>Executive Overview (totals)</td><td>No cross-source dedup. Total = raw counts. Documented as known limitation.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── 2.4 BUILD SEQUENCE ── -->
+  <div id="sub-req-build" class="sub-panel">
+    <div class="card">
+      <h2>Recommended Build Order (Greenfield)</h2>
+      <div class="panel panel-warn"><strong>If rebuilding from scratch, follow this dependency-driven order:</strong></div>
+      <table>
+        <thead><tr><th>Phase</th><th>Tabs</th><th>Rationale</th></tr></thead>
+        <tbody>
+          <tr><td><strong>Phase 1: Foundation</strong></td><td>Track Crosswalk (#8), FAQ/Methodology (#12)</td><td>Establish taxonomy and documentation first; all tabs depend on consistent track mapping.</td></tr>
+          <tr><td><strong>Phase 2: Core Views</strong></td><td>Executive Overview (#2), Track Explorer (#3), Track Map (#4)</td><td>Build primary visualization layers using established taxonomy.</td></tr>
+          <tr><td><strong>Phase 3: Evidence Layer</strong></td><td>Verbatim Evidence (#7), Seller Forum (#11)</td><td>Add raw evidence browsing with PII redaction and forum data.</td></tr>
+          <tr><td><strong>Phase 4: Intelligence</strong></td><td>Paper Cuts Intelligence (#6), AOP Alignment (#5)</td><td>Build scoring model and AOP mapping after evidence layer is stable.</td></tr>
+          <tr><td><strong>Phase 5: Operational Sources</strong></td><td>Voice of Seller (#9), Product ER (#10)</td><td>Integrate escalation tracking and emergency response data.</td></tr>
+          <tr><td><strong>Phase 6: Navigation</strong></td><td>Table of Contents (#1)</td><td>Build last since it references all other tabs.</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+
+<!-- ╔══════════════════════════════════════════════════════════════╗
+     ║  TAB 3: PLAYBOOK                                              ║
+     ╚══════════════════════════════════════════════════════════════╝ -->
+<div id="panel-playbook" class="tab-panel">
+
+  <div class="sub-nav" id="subnav-playbook">
+    <button class="sub-btn active" onclick="showSub('playbook','pb-access')">Access, Roles & Filters</button>
+    <button class="sub-btn" onclick="showSub('playbook','pb-workflows')">Daily & Weekly Workflows</button>
+    <button class="sub-btn" onclick="showSub('playbook','pb-confidence')">Confidence & Source Bias</button>
+    <button class="sub-btn" onclick="showSub('playbook','pb-recipes')">Insight → Action Recipes</button>
+    <button class="sub-btn" onclick="showSub('playbook','pb-ref')">Quick Reference</button>
+  </div>
+
+  <!-- ── 3.1 ACCESS ── -->
+  <div id="sub-pb-access" class="sub-panel active">
+    <div class="card">
+      <h2>Access & Roles</h2>
+      <table>
+        <thead><tr><th>Role</th><th>Access</th><th>Primary Tabs</th><th>Permissions</th></tr></thead>
+        <tbody>
+          <tr><td><strong>VP / Director</strong></td><td>Full Read</td><td>Executive Overview, Track Map, AOP, VoS</td><td>View all; PII-redacted verbatims; all confidence levels</td></tr>
+          <tr><td><strong>Product Manager</strong></td><td>Full Read</td><td>Track Explorer, Paper Cuts, Verbatim, Forum</td><td>View all; drill into track data; export Forum CSV</td></tr>
+          <tr><td><strong>PM Lead / Engineering</strong></td><td>Full Read</td><td>Paper Cuts, Verbatim Evidence, Product ER</td><td>View all; scoring breakdown; PER cross-references</td></tr>
+          <tr><td><strong>Strategy / Planning</strong></td><td>Full Read</td><td>Track Map, AOP Alignment</td><td>View all; AOP coverage gap analysis focus</td></tr>
+          <tr><td><strong>Support Operations</strong></td><td>Full Read</td><td>Verbatim Evidence, Product ER, VoS</td><td>View all; search verbatims; PER status tracking</td></tr>
+          <tr><td><strong>Data Analyst</strong></td><td>Full Read + Export</td><td>All tabs</td><td>Full access; CSV export; methodology reference</td></tr>
+        </tbody>
+      </table>
+      <div class="panel panel-warn"><strong>Access Notes:</strong> The dashboard is a self-contained HTML file. No backend required. All data embedded or loaded from local files. PII redaction at render time. Raw data files may contain unredacted PII — access-control them separately.</div>
+    </div>
+
+    <div class="card">
+      <h2>Filter Hierarchy (Cascading)</h2>
+      <table>
+        <thead><tr><th>Level</th><th>Filter</th><th>Options</th><th>Applies To</th></tr></thead>
+        <tbody>
+          <tr><td>1</td><td><strong>Product Track</strong></td><td>Item, Orders, Core App, Support Hub, Payments, WFS, Onboarding, Analytics, Growth Opps, Communications</td><td>Track Explorer, Paper Cuts, Verbatim, AOP</td></tr>
+          <tr><td>2</td><td><strong>Data Source</strong></td><td>ASUS, Reddit, Doorbell, VoS, PER Jira, Support Cases, Seller Forum</td><td>Paper Cuts, Verbatim</td></tr>
+          <tr><td>3</td><td><strong>Severity</strong></td><td>Critical, High, Medium, Low</td><td>Executive Overview, Track Map, Paper Cuts, Verbatim</td></tr>
+          <tr><td>4</td><td><strong>Sentiment</strong></td><td>Positive, Neutral, Negative</td><td>Verbatim, Seller Forum, Reddit</td></tr>
+          <tr><td>5</td><td><strong>Confidence</strong></td><td>High (3+ sources), Medium (2, 100+), Low (single)</td><td>Paper Cuts</td></tr>
+          <tr><td>6</td><td><strong>AOP Coverage</strong></td><td>Covered, Partial, No Coverage</td><td>Paper Cuts, AOP Alignment</td></tr>
+          <tr><td>7</td><td><strong>Score Range</strong></td><td>70–87 (Qualified), 88–100 (Critical)</td><td>Paper Cuts</td></tr>
+          <tr><td>8</td><td><strong>Status</strong></td><td>Implemented, Resolved, To Be Developed, In Progress, Unresponsive</td><td>Voice of Seller</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ── 3.2 WORKFLOWS ── -->
+  <div id="sub-pb-workflows" class="sub-panel">
+    <div class="card">
+      <h2>Daily Workflow (5–10 minutes)</h2>
+      <p style="color:var(--g6); margin-bottom:16px;">Morning check-in routine for staying current on seller feedback signals.</p>
+      <div class="wf-box"><h4>Step 1: Executive Overview Scan (2 min)</h4><ul><li>Open dashboard → <strong>Executive Overview</strong> tab</li><li>Check KPI cards: total signals, critical alert count, source count</li><li>Review severity breakdown. New Critical alerts since yesterday?</li><li>Check monthly trend chart. Current month >20% spike → investigate</li></ul></div>
+      <div class="wf-box"><h4>Step 2: Pain Theme Quick Check (2 min)</h4><ul><li>Scan top 5 pain themes in Executive Overview</li><li>Compare to yesterday. Any theme moved up? New theme appeared?</li><li>If "No AOP Coverage" → flag for weekly review</li></ul></div>
+      <div class="wf-box"><h4>Step 3: VoS Status Check (1 min)</h4><ul><li>Navigate to <strong>Voice of Seller</strong></li><li>Filter: Status = "Team Unresponsive"</li><li>Any new → immediately escalate to responsible PM or Director</li></ul></div>
+      <div class="wf-box"><h4>Step 4: Track Deep Dive [PMs only] (3 min)</h4><ul><li><strong>Track Explorer</strong> → select your Product Track</li><li>Any new subtopics gaining volume?</li><li>Subtopic >30% increase → click through to verbatims</li><li>Note new themes for sprint planning</li></ul></div>
+      <div class="panel panel-info"><strong>Daily Output:</strong> Current signal state awareness, new Critical alerts noted, "Team Unresponsive" VoS issues escalated, PM track-specific pain signals identified.</div>
+    </div>
+
+    <div class="card">
+      <h2>Weekly Workflow (30 minutes)</h2>
+      <p style="color:var(--g6); margin-bottom:16px;">Deep-dive session for cross-functional analysis and planning input.</p>
+      <div class="wf-box"><h4>Step 1: Paper Cuts Review (10 min)</h4><ul><li><strong>Paper Cuts Intelligence</strong> → sort by score descending</li><li>Review top 5 critical (score ≥ 88). For each, expand drilldown:<ul><li>Trend sparkline: growing, stable, or declining?</li><li>Which dimension drives the score?</li><li>Read 3–5 representative verbatims</li><li>Note AOP coverage status</li></ul></li><li>Filter to "No AOP Coverage" → review all 5 uncovered paper cuts</li></ul></div>
+      <div class="wf-box"><h4>Step 2: AOP Alignment Audit (5 min)</h4><ul><li><strong>AOP Alignment</strong> → review coverage gaps</li><li>Any newly identified gaps since last week?</li><li>"Partial" items → which subtopics remain unaddressed?</li><li>Document gaps for next planning forum</li></ul></div>
+      <div class="wf-box"><h4>Step 3: Cross-Source Validation (5 min)</h4><ul><li>Pick top emerging issue from Step 1</li><li><strong>Verbatim Evidence</strong> → search by keyword. Which sources report it?</li><li><strong>Seller Forum</strong> → community threads on same topic?</li><li>3+ sources validate → high-confidence escalation</li></ul></div>
+      <div class="wf-box"><h4>Step 4: Product ER Cross-Check (5 min)</h4><ul><li><strong>Product ER</strong> → PER issues overlapping top paper cuts?</li><li>If emergency filed for a chronic paper cut → paper cut has escalated to outage-level</li></ul></div>
+      <div class="wf-box"><h4>Step 5: Track Map Strategic View (5 min)</h4><ul><li><strong>Track Map</strong> → toggle volume vs. severity views</li><li>Identify any track: large tile (high volume) AND red (critical severity)</li><li>Compare to last week. Any track changed severity level?</li><li>Prepare 2–3 talking points for leadership</li></ul></div>
+      <div class="panel panel-info"><strong>Weekly Output:</strong> Updated paper cut priorities, AOP gap documentation, cross-source validation notes, PER overlap findings, 2–3 leadership talking points.</div>
+    </div>
+  </div>
+
+  <!-- ── 3.3 CONFIDENCE ── -->
+  <div id="sub-pb-confidence" class="sub-panel">
+    <div class="card">
+      <h2>Confidence Interpretation Guide</h2>
+      <table>
+        <thead><tr><th>Confidence</th><th>Criteria</th><th>What It Means</th><th>Recommended Action</th><th>Decision Use</th></tr></thead>
+        <tbody>
+          <tr><td><span class="tag tag-green">HIGH</span></td><td>3+ independent sources agree</td><td>Cross-validated across structurally different channels. Source bias unlikely.</td><td>Act directly. Prioritize this sprint/quarter.</td><td>Safe for investment decisions, exec presentations, AOP justification.</td></tr>
+          <tr><td><span class="tag tag-yellow">MEDIUM</span></td><td>2 sources, 100+ signals</td><td>Appears in two channels with volume. Likely real, could be amplified by source behavior.</td><td>Validate with one more source. Check Verbatim Evidence for corroboration.</td><td>Suitable for backlog prioritization. Add validation step before major investment.</td></tr>
+          <tr><td><span class="tag tag-red">LOW</span></td><td>Single source only</td><td>Only one channel reports this. Could be real, source-specific, or data anomaly.</td><td>Investigate. Search other sources. Set monitoring flag for future data.</td><td>Research leads and hypothesis formation only. Do not cite in exec materials.</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Source Bias Awareness</h2>
+      <div class="grid-2">
+        <div class="mini-card"><h4>ASUS Feedback</h4><p><strong>Bias:</strong> Self-selected respondents; over-represents engaged sellers.<br><strong>Strength:</strong> 22-month depth; structured; partner-linkable.<br><strong>Mitigant:</strong> Largest dataset (23K+) provides statistical stability.</p></div>
+        <div class="mini-card"><h4>Reddit r/WalmartSellers</h4><p><strong>Bias:</strong> Skews toward frustrated, vocal sellers. Upvote dynamics amplify emotional posts.<br><strong>Strength:</strong> Unfiltered, organic. Virality captures community resonance.<br><strong>Mitigant:</strong> Cross-reference with ASUS and Support Cases.</p></div>
+        <div class="mini-card"><h4>Voice of Seller</h4><p><strong>Bias:</strong> Selection bias toward largest/most engaged sellers via NPS/MAT.<br><strong>Strength:</strong> Escalated with action plan accountability.<br><strong>Mitigant:</strong> Treat as "top of pyramid"; confirm prevalence via ASUS/Doorbell.</p></div>
+        <div class="mini-card"><h4>Seller Forum</h4><p><strong>Bias:</strong> Vocal, community-active sellers. Lurkers underrepresented.<br><strong>Strength:</strong> Threaded discussion reveals consensus; view counts show broader interest.<br><strong>Mitigant:</strong> Use countViews as proxy for silent agreement.</p></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 3.4 RECIPES ── -->
+  <div id="sub-pb-recipes" class="sub-panel">
+    <div class="card">
+      <h2>Insight → Action Recipes</h2>
+      <p>Click any recipe to expand the step-by-step playbook.</p>
+    </div>
+
+    <div class="recipe"><div class="recipe-head" onclick="toggleRecipe(this)"><span class="recipe-num">1</span><span class="recipe-title">Justify a Bug Fix Sprint Based on Paper Cut Evidence</span></div><div class="recipe-body"><p><strong>When:</strong> Engineering asks "why should we dedicate a sprint to this?"</p><ul class="recipe-steps"><li>Paper Cuts Intelligence → find the issue; expand drilldown</li><li>Screenshot the 6-dimension breakdown showing composite score</li><li>Note confidence level. If High → emphasize cross-source validation</li><li>Copy 3 representative verbatims for seller voice</li><li>Check AOP Alignment for coverage status. "No Coverage" = gap argument</li><li>Present: composite score (quant), verbatims (qual), AOP status (strategic), confidence (quality)</li></ul></div></div>
+
+    <div class="recipe"><div class="recipe-head" onclick="toggleRecipe(this)"><span class="recipe-num">2</span><span class="recipe-title">Escalate a VoS "Team Unresponsive" Issue</span></div><div class="recipe-body"><p><strong>When:</strong> VoS issue shows "Team Unresponsive" for >1 review cycle.</p><ul class="recipe-steps"><li>Voice of Seller → Filter: Status = "Team Unresponsive"</li><li>Note the track mapping and original escalation date</li><li>Cross-reference in Track Explorer for signal volume on same topic</li><li>Check Paper Cuts for overlapping scored paper cut → note score</li><li>Draft escalation email: VoS details + signal volume + paper cut score + time since escalation</li><li>CC VP-level sponsor. Include dashboard link for verification</li></ul></div></div>
+
+    <div class="recipe"><div class="recipe-head" onclick="toggleRecipe(this)"><span class="recipe-num">3</span><span class="recipe-title">Build an AOP Investment Case for an Uncovered Pain Area</span></div><div class="recipe-body"><p><strong>When:</strong> AOP planning cycle is open; propose new investment.</p><ul class="recipe-steps"><li>AOP Alignment → Filter: Coverage = "No Coverage"</li><li>Select highest-volume uncovered cluster. Note signals, severity, tracks</li><li>Paper Cuts → find corresponding paper cut(s). Note scores and confidence</li><li>Verbatim Evidence → search topic; export 10–15 compelling verbatims</li><li>Seller Forum → check community threads; note view counts for broader impact</li><li>Build case: volume (scale) + score (rigor) + verbatims (emotion) + forum (validation) + "No AOP Coverage" (gap)</li></ul></div></div>
+
+    <div class="recipe"><div class="recipe-head" onclick="toggleRecipe(this)"><span class="recipe-num">4</span><span class="recipe-title">Triage a New Product Emergency (PER) Against Paper Cuts</span></div><div class="recipe-body"><p><strong>When:</strong> New PRODER Jira issue filed; assess if one-off or chronic.</p><ul class="recipe-steps"><li>Product ER → find new PER issue. Note summary, status, severity</li><li>Paper Cuts Intelligence → search same topic area</li><li>If matching paper cut with score ≥ 70 → PER is symptom of chronic friction. ER addresses outage; paper cut root cause needs longer fix</li><li>If no matching paper cut → novel incident. Monitor for recurrence</li><li>Document PER-to-Paper-Cut linkage in issue tracker</li></ul></div></div>
+
+    <div class="recipe"><div class="recipe-head" onclick="toggleRecipe(this)"><span class="recipe-num">5</span><span class="recipe-title">Prepare a Quarterly Leadership Brief</span></div><div class="recipe-body"><p><strong>When:</strong> Presenting seller feedback insights to VP/Directors quarterly.</p><ul class="recipe-steps"><li>Executive Overview → capture KPIs + top 5 pain themes</li><li>Track Map → screenshot treemap in severity-overlay mode</li><li>Paper Cuts → filter Critical (≥88). List top 5 with scores + confidence + AOP</li><li>AOP Alignment → count Covered vs. Partial vs. No Coverage. Gap count = call to action</li><li>VoS → summarize status distribution. "Team Unresponsive" count = red flag metric</li><li>Build 3-slide brief: (1) KPIs + Track Map, (2) Top 5 Paper Cuts + AOP Gaps, (3) VoS Status + Recommended Actions</li></ul></div></div>
+
+    <div class="recipe"><div class="recipe-head" onclick="toggleRecipe(this)"><span class="recipe-num">6</span><span class="recipe-title">Validate a Hypothesis Using Cross-Source Evidence</span></div><div class="recipe-body"><p><strong>When:</strong> Stakeholder claims "sellers are struggling with X" — confirm or deny.</p><ul class="recipe-steps"><li>Verbatim Evidence → search keyword. How many results? Which sources?</li><li>Track Explorer → navigate to relevant Track/Topic. Volume significant vs. track total?</li><li>Paper Cuts → appears as scored paper cut? Note score + confidence</li><li>Seller Forum → threads on topic? High views + comments = broad concern</li><li>Synthesize: 3+ sources = validated (High). 1–2 = plausible (Med/Low). 0 = not supported by current data</li></ul></div></div>
+
+    <div class="recipe"><div class="recipe-head" onclick="toggleRecipe(this)"><span class="recipe-num">7</span><span class="recipe-title">Monitor a Recently Shipped Fix for Impact</span></div><div class="recipe-body"><p><strong>When:</strong> Your team shipped a fix for a known paper cut — track improvement.</p><ul class="recipe-steps"><li>Paper Cuts → find the paper cut. Note current score, signal count, trend</li><li>Bookmark state: score value, current month volume, sentiment distribution</li><li>After 2–4 weeks live → revisit. Trend sparkline declining?</li><li>Verbatim Evidence → filter recent dates. Still reporting the issue, or volume dropped?</li><li>Seller Forum → declining new thread creation = positive signal</li><li>Volume drops >25% in 4–6 weeks → fix is working. Stable/increasing → not addressing root cause; investigate</li></ul></div></div>
+  </div>
+
+  <!-- ── 3.5 QUICK REFERENCE ── -->
+  <div id="sub-pb-ref" class="sub-panel">
+    <div class="card">
+      <h2>Quick Reference Card</h2>
+    </div>
+    <div class="grid-3">
+      <div class="mini-card">
+        <h4>Paper Cut Thresholds</h4>
+        <table><tbody>
+          <tr><td>Qualified Paper Cut</td><td><strong>Score ≥ 70</strong></td></tr>
+          <tr><td>Critical Paper Cut</td><td><strong>Score ≥ 88</strong></td></tr>
+          <tr><td>Total Identified</td><td>15</td></tr>
+          <tr><td>Critical Count</td><td>5</td></tr>
+          <tr><td>No AOP Coverage</td><td>5</td></tr>
+        </tbody></table>
+      </div>
+      <div class="mini-card">
+        <h4>Confidence Quick Guide</h4>
+        <table><tbody>
+          <tr><td><span class="tag tag-green">High</span></td><td>3+ sources. Act directly.</td></tr>
+          <tr><td><span class="tag tag-yellow">Medium</span></td><td>2 sources, 100+. Validate then act.</td></tr>
+          <tr><td><span class="tag tag-red">Low</span></td><td>1 source only. Investigate.</td></tr>
+        </tbody></table>
+      </div>
+      <div class="mini-card">
+        <h4>VoS Status Definitions</h4>
+        <table><tbody>
+          <tr><td><span class="tag tag-green">Implemented</span></td><td>Fix deployed</td></tr>
+          <tr><td><span class="tag tag-green">Resolved</span></td><td>Verified resolved</td></tr>
+          <tr><td><span class="tag tag-yellow">To Be Developed</span></td><td>Planning</td></tr>
+          <tr><td><span class="tag tag-blue">In Progress</span></td><td>Actively working</td></tr>
+          <tr><td><span class="tag tag-red">Team Unresponsive</span></td><td>No response; escalate</td></tr>
+        </tbody></table>
+      </div>
+      <div class="mini-card">
+        <h4>10 Product Tracks</h4>
+        <ol style="font-size:13px; margin-left:16px;"><li>Item</li><li>Orders</li><li>Core App</li><li>Support Hub</li><li>Payments</li><li>WFS</li><li>Onboarding</li><li>Analytics</li><li>Growth Opps</li><li>Communications</li></ol>
+      </div>
+      <div class="mini-card">
+        <h4>Key AOP Initiative IDs</h4>
+        <table><tbody>
+          <tr><td>27009, 27022, 27023, 27029</td><td>Item Setup (Catalog)</td></tr>
+          <tr><td>27020</td><td>Platform UX/Stability</td></tr>
+          <tr><td>27019, 27044</td><td>Support Quality/Tooling</td></tr>
+          <tr><td>27002, 27016, 27017, 27036</td><td>Order Management</td></tr>
+          <tr><td>27003, 27007, 27018, 27038</td><td>Payments</td></tr>
+        </tbody></table>
+      </div>
+      <div class="mini-card">
+        <h4>Known Limitations</h4>
+        <ol style="font-size:12px; margin-left:16px;"><li>Keyword mapping (~5-11% unmapped)</li><li>Reddit skews vocal/frustrated</li><li>VoS selection bias (engaged sellers)</li><li>ASUS = 22mo vs. Reddit = 9mo</li><li>No cross-source dedup yet</li><li>Forum skews vocal sellers</li></ol>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ╔══════════════════════════════════════════════════════════════╗
+     ║  TAB 4: FAQ                                                    ║
+     ╚══════════════════════════════════════════════════════════════╝ -->
+<div id="panel-faq" class="tab-panel">
+
+  <div class="sub-nav" id="subnav-faq">
+    <button class="sub-btn active" onclick="showSub('faq','faq-data')">Data Sources</button>
+    <button class="sub-btn" onclick="showSub('faq','faq-methodology')">Methodology & Scoring</button>
+  </div>
+
+  <!-- ── 4.1 DATA SOURCES FAQ ── -->
+  <div id="sub-faq-data" class="sub-panel active">
+    <div class="card">
+      <h2>Data Sources FAQ</h2>
+
+      <div class="faq-q" onclick="toggleFAQ(this)">Where does ASUS Feedback data come from?</div>
+      <div class="faq-a">ASUS (After-Service Unit Survey) data comes from Seller Center feedback forms. Sellers submit feedback after interacting with specific features or completing workflows. Period: May 2024 – March 2026. Volume: ~23,000+ signals. Fields include Partner ID, Tracks, Features, Message, Feedback Date, Topic, and Sub Topic. This is the largest single data source.</div>
+
+      <div class="faq-q" onclick="toggleFAQ(this)">Where does Reddit data come from?</div>
+      <div class="faq-a">Reddit data is collected from the r/WalmartSellers subreddit via API and scraping. Period: June 2025 – March 2026. Volume: ~2,500+ posts and comments. Each post includes a summary, discussion summary, upvotes, sentiment classification (Positive/Neutral/Negative), topic/subtopic mapping, and a Virality Score. <strong>Bias note:</strong> Reddit skews toward frustrated, vocal sellers. Upvote dynamics can amplify emotionally charged posts.</div>
+
+      <div class="faq-q" onclick="toggleFAQ(this)">Where does Voice of Seller (VoS) data come from?</div>
+      <div class="faq-a">VoS consolidates seller feedback from four primary channels:
+        <ul>
+          <li><strong>Seller Sentiment Survey (OSAT/JSAT):</strong> Quantitative satisfaction scores from periodic surveys</li>
+          <li><strong>ASUS:</strong> After-service responses from Seller Center workflows</li>
+          <li><strong>Social Listening:</strong> Reddit + Seller Forum sentiment</li>
+          <li><strong>BD (Business Development):</strong> Direct seller engagement via SAM, China Seller Summit, US Seller Summit</li>
+        </ul>
+        Issues are triaged, classified by Track, and assigned owners with documented action plans and ETAs. Period: FY26 Q1–Q4. Volume: 139 escalated issues.
+      </div>
+
+      <div class="faq-q" onclick="toggleFAQ(this)">Where does Seller Forum data come from?</div>
+      <div class="faq-a">Seller Forum data comes from the Walmart Marketplace Learn community (MP Learn). It includes:
+        <ul>
+          <li><strong>Forum Threads:</strong> Discussion threads posted by sellers seeking help, reporting issues, or sharing experiences (~483 threads)</li>
+          <li><strong>Forum Comments:</strong> Replies and moderator responses (~1,300+ comments)</li>
+          <li><strong>User Mapping:</strong> Links forum user IDs (anonymized Vanilla display names) to Partner IDs where available</li>
+        </ul>
+        <strong>Source bias:</strong> Forum participants skew toward more vocal/frustrated sellers. High view counts can amplify perceived severity. Not all forum users are mapped to Partner IDs.
+      </div>
+
+      <div class="faq-q" onclick="toggleFAQ(this)">Where does Product ER data come from?</div>
+      <div class="faq-a">Product ER (PER) data comes from the PRODER Jira project — "Marketplace Product Emergency Response." These are individually escalated incidents requiring direct intervention. Period: September 2024 – January 2026. Volume: 194 issues. Fields include Issue key, Status, Summary, Assignee, and Created date. The project description: "Marketplace Product Excellence emphasizes getting the right products/features to target sellers faster based on their requests/complaints through deep user insight."</div>
+
+      <div class="faq-q" onclick="toggleFAQ(this)">What is the data refresh cadence?</div>
+      <div class="faq-a">Currently, data is loaded as snapshots embedded in the dashboard HTML file. There is no automated pipeline for real-time refresh. To update the dashboard, raw data files must be re-exported from their source systems, processed through the taxonomy mapping pipeline, and the dashboard HTML regenerated. Future state: automated ETL pipeline with weekly or daily refresh cadence.</div>
+
+      <div class="faq-q" onclick="toggleFAQ(this)">How are duplicate signals handled across sources?</div>
+      <div class="faq-a">Currently, <strong>no cross-source deduplication is implemented.</strong> The same seller issue may appear in multiple sources (e.g., ASUS + Reddit + VoS). Total signal counts reflect raw aggregated volumes. This is documented as a known limitation. Cross-source convergence flags (3+ sources agreeing) partially address this by highlighting validated pain points rather than relying on raw volume alone.</div>
+    </div>
+  </div>
+
+  <!-- ── 4.2 METHODOLOGY FAQ ── -->
+  <div id="sub-faq-methodology" class="sub-panel">
+    <div class="card">
+      <h2>Methodology & Scoring FAQ</h2>
+
+      <div class="faq-q" onclick="toggleFAQ(this)">How does Track Mapping work?</div>
+      <div class="faq-a">Track mapping uses a 3-step keyword-based process:
+        <ul>
+          <li><strong>Step 1 — Keyword Extraction:</strong> Each signal's text (title, verbatim, summary) is tokenized. Keywords are matched against a curated dictionary of 200+ terms mapped to 25 official Product Tracks (consolidated to 10 for this dashboard).</li>
+          <li><strong>Step 2 — Multi-Signal Alignment:</strong> Signals from all sources are independently mapped, then cross-referenced. Issues appearing in 3+ sources get a "Signal Convergence" flag indicating higher confidence.</li>
+          <li><strong>Step 3 — Unmapped Handling:</strong> ~11% of PER issues and ~5% of other signals don't match any keyword pattern. These are classified as "Unmapped/Other" for manual review.</li>
+        </ul>
+        <strong>Limitation:</strong> This is keyword-based, not ML. Future improvement could use LLM-based classification for higher accuracy.
+      </div>
+
+      <div class="faq-q" onclick="toggleFAQ(this)">How is the Paper Cut Score calculated?</div>
+      <div class="faq-a">
+        <div class="formula" style="margin:8px 0">pc_score = (recurrence × 0.25) + (breadth × 0.20) + (persistence × 0.20) + (friction_signal × 0.20) + (support_burden × 0.10) + (source_diversity × 0.05)</div>
+        Each dimension is normalized to a 0–100 scale. The composite score determines inclusion: Score ≥ 70 = qualified Paper Cut (15 identified). Score ≥ 88 = Critical (5 identified). The formula is deterministic — same inputs always produce the same score. All 6 dimension weights are documented and auditable.
+      </div>
+
+      <div class="faq-q" onclick="toggleFAQ(this)">What does "confidence" mean?</div>
+      <div class="faq-a">Confidence reflects data completeness and cross-validation strength:
+        <ul>
+          <li><strong>High:</strong> 3+ independent sources agree on the issue. Safe to act on directly.</li>
+          <li><strong>Medium:</strong> 2 sources agree with 100+ total signals. Validate before major investment.</li>
+          <li><strong>Low:</strong> Single source only. Investigate further before prioritizing.</li>
+        </ul>
+        Confidence does NOT measure severity. A "Medium confidence" issue can still be Critical severity if its impact is high.
+      </div>
+
+      <div class="faq-q" onclick="toggleFAQ(this)">How is severity different from pc_score?</div>
+      <div class="faq-a"><strong>Severity</strong> is an editorial judgment (Critical/High/Medium) based on business impact assessment. <strong>pc_score</strong> is purely quantitative — computed from signal volume, persistence, breadth, friction language, support burden, and source diversity. A "Medium" severity issue can have a high pc_score if it's widespread but low-impact per seller. Both signals are valuable: severity for strategic prioritization, pc_score for data-driven ranking.</div>
+
+      <div class="faq-q" onclick="toggleFAQ(this)">What's the difference between PER issues and Paper Cuts?</div>
+      <div class="faq-a"><strong>Paper Cuts</strong> are statistical patterns distilled from thousands of signals — they represent recurring friction patterns (the "death by a thousand cuts" issues). <strong>PER (Product ER)</strong> issues are individually escalated, Jira-tracked incidents from the PRODER project — they represent acute seller pain requiring direct intervention. Use both for a complete picture: Paper Cuts show systemic trends; PER shows specific fires. Some tracks may appear in PER but not Paper Cuts (not enough volume for statistical pattern), and vice versa.</div>
+
+      <div class="faq-q" onclick="toggleFAQ(this)">What do VoS statuses mean?</div>
+      <div class="faq-a">
+        <table>
+          <thead><tr><th>Status</th><th>Definition</th></tr></thead>
+          <tbody>
+            <tr><td><span class="tag tag-green">Action Plan Implemented</span></td><td>Agreed action plan has been fully completed.</td></tr>
+            <tr><td><span class="tag tag-green">Issue Resolved/Closed</span></td><td>Issue resolved or closed, including business decisions.</td></tr>
+            <tr><td><span class="tag tag-yellow">Action Plan to be Developed</span></td><td>Team still needs to develop a solution or action plan.</td></tr>
+            <tr><td><span class="tag tag-blue">Action Plan In Progress</span></td><td>Team is actively working on the initiative.</td></tr>
+            <tr><td><span class="tag tag-red">Team Unresponsive</span></td><td>Team contacted at least 3 times for root cause and action plan but has not responded. These require immediate leadership attention — 17 such issues exist in the current dataset.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="faq-q" onclick="toggleFAQ(this)">What are the known limitations?</div>
+      <div class="faq-a">
+        <ul>
+          <li><strong>Track mapping accuracy:</strong> Keyword-based, not ML. ~5-11% of signals are unmapped.</li>
+          <li><strong>Reddit bias:</strong> Skews toward vocal, frustrated sellers — not representative of all sellers.</li>
+          <li><strong>VoS selection bias:</strong> Reflects most engaged sellers, not the silent majority.</li>
+          <li><strong>Temporal gaps:</strong> ASUS = 22 months, Reddit = 9 months. Direct volume comparisons misleading.</li>
+          <li><strong>No cross-source deduplication:</strong> Same issue may appear in multiple sources. Totals are raw counts.</li>
+          <li><strong>Seller Forum bias:</strong> Vocal participants; engagement metrics can amplify perceived severity.</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+</div><!-- /page-wrap -->
+
+<!-- FOOTER -->
+<div style="background:var(--dark); color:var(--g5); text-align:center; padding:16px; font-size:.72rem; margin-top:32px;">
+  Seller Feedback Quality Signals — Documentation Pack · Walmart Marketplace · 34,800+ signals · 7 sources · 10 tracks · 12 tabs · Generated March 25, 2026
+</div>
+
+<!-- BACK TO TOP -->
+<button class="back-top" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="Back to top">↑</button>
+
+<script>
+/* ═══ PRIMARY TABS ═══ */
+function showPrimary(tab) {
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));
+  const panel = document.getElementById('panel-' + tab);
+  if (panel) panel.classList.add('active');
+  document.querySelectorAll('.ptab').forEach(b => {
+    if (b.textContent.toLowerCase().includes(tab === 'toc' ? 'contents' : tab === 'overview' ? 'initiative' : tab === 'requirements' ? 'requirements' : tab === 'playbook' ? 'playbook' : 'faq')) b.classList.add('active');
+  });
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+/* ═══ SUB-TABS ═══ */
+function showSub(primary, sub) {
+  // Ensure primary is active
+  showPrimary(primary);
+  // Toggle sub-panels
+  const panel = document.getElementById('panel-' + primary);
+  if (!panel) return;
+  panel.querySelectorAll('.sub-panel').forEach(s => s.classList.remove('active'));
+  panel.querySelectorAll('.sub-btn').forEach(b => b.classList.remove('active'));
+  const subPanel = document.getElementById('sub-' + sub);
+  if (subPanel) subPanel.classList.add('active');
+  // Activate button
+  const subNav = document.getElementById('subnav-' + primary);
+  if (subNav) {
+    const btns = subNav.querySelectorAll('.sub-btn');
+    btns.forEach(b => {
+      const panelId = 'sub-' + sub;
+      // Match by checking all sub-panels
+      if (b.onclick && b.onclick.toString().includes(sub)) b.classList.add('active');
+    });
+  }
+  // Scroll to top of content
+  setTimeout(() => { panel.scrollIntoView({ behavior: 'smooth', block: 'start' }); }, 100);
+}
+
+/* ═══ FAQ TOGGLE ═══ */
+function toggleFAQ(el) {
+  el.classList.toggle('open');
+  const a = el.nextElementSibling;
+  if (a && a.classList.contains('faq-a')) a.classList.toggle('open');
+}
+
+/* ═══ RECIPE TOGGLE ═══ */
+function toggleRecipe(el) {
+  const body = el.nextElementSibling;
+  if (body) body.classList.toggle('open');
+}
+
+/* ═══ MERMAID INIT ═══ */
+mermaid.initialize({
+  startOnLoad: true,
+  theme: 'base',
+  themeVariables: {
+    primaryColor: '#E6F2FF', primaryTextColor: '#1a1a2e', primaryBorderColor: '#0071CE',
+    lineColor: '#0071CE', secondaryColor: '#FFF8E1', tertiaryColor: '#e8f5e9', fontSize: '13px'
+  },
+  flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' }
+});
+</script>
+</body>
+</html>
