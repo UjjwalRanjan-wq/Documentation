@@ -356,209 +356,247 @@
 
   <!-- ── 1.2 ARCHITECTURE ── -->
   <div id="sub-ov-arch" class="sub-panel">
+
+    <!-- DIAGRAM 1: End-to-End Data Flow -->
     <div class="card">
-      <h2>End-to-End Data Flow</h2>
+      <h2>1. End-to-End Data Flow</h2>
       <p>7 independent data sources feed through a processing layer (keyword extraction, track mapping, sentiment analysis, PII redaction, paper cut scoring) into the 12-tab dashboard.</p>
       <div class="mermaid">
 graph LR
-    subgraph Sources["📥 Data Sources (7)"]
-        A1["ASUS Feedback\n~23,000+"]
-        A2["Reddit\n~2,500+"]
-        A3["Doorbell\n~5,000+"]
-        A4["VoS\n139 issues"]
-        A5["PER Jira\n194 issues"]
-        A6["Support Cases\n~3,000+"]
-        A7["Seller Forum\n~483 threads"]
+    subgraph Sources[Data Sources - 7 Total]
+        A1[ASUS Feedback<br/>23K signals]
+        A2[Reddit<br/>2.5K signals]
+        A3[Doorbell<br/>5K signals]
+        A4[VoS<br/>139 issues]
+        A5[PER Jira<br/>194 issues]
+        A6[Support Cases<br/>3K signals]
+        A7[Seller Forum<br/>483 threads]
     end
-    subgraph Processing["⚙️ Processing Layer"]
-        B1["Keyword Extraction\n200+ term dictionary"]
-        B2["Track Mapping\n10 Product Tracks"]
-        B3["Sentiment Analysis"]
-        B4["PII Redaction"]
-        B5["Paper Cut Scoring\n6 dimensions"]
+    subgraph Processing[Processing Layer]
+        B1[Keyword Extraction<br/>200 term dictionary]
+        B2[Track Mapping<br/>10 Product Tracks]
+        B3[Sentiment Analysis]
+        B4[PII Redaction]
+        B5[Paper Cut Scoring<br/>6 dimensions]
     end
-    subgraph Dash["📊 Dashboard (12 tabs)"]
-        C1["Executive Overview"]
-        C2["Track Explorer"]
-        C3["Paper Cuts Intelligence"]
-        C4["AOP Alignment"]
-        C5["Verbatim Evidence"]
-        C6["Voice of Seller"]
-        C7["Product ER"]
-        C8["+ 5 more tabs"]
+    subgraph Dash[Dashboard - 12 tabs]
+        C1[Executive Overview]
+        C2[Track Explorer]
+        C3[Paper Cuts Intelligence]
+        C4[AOP Alignment]
+        C5[Verbatim Evidence]
+        C6[Voice of Seller]
+        C7[Product ER]
+        C8[5 more tabs]
     end
-    A1 & A2 & A3 & A4 & A5 & A6 & A7 --> B1
-    B1 --> B2 --> B3 --> B4 --> B5
-    B5 --> C1 & C2 & C3 & C4 & C5
+    A1 --> B1
+    A2 --> B1
+    A3 --> B1
+    A6 --> B1
+    A7 --> B1
+    A4 --> B1
+    A5 --> B1
+    B1 --> B2
+    B2 --> B3
+    B3 --> B4
+    B4 --> B5
+    B5 --> C1
+    B5 --> C2
+    B5 --> C3
+    B5 --> C4
+    B5 --> C5
     A4 --> C6
     A5 --> C7
-    style Sources fill:#E6F2FF,stroke:#0071CE
-    style Processing fill:#FFF8E1,stroke:#FFC220
-    style Dash fill:#e8f5e9,stroke:#28a745
+    style Sources fill:#E6F2FF,stroke:#0071CE,color:#004C91
+    style Processing fill:#FFF8E1,stroke:#FFC220,color:#856404
+    style Dash fill:#e8f5e9,stroke:#28a745,color:#155724
       </div>
     </div>
 
+    <!-- DIAGRAM 2: Taxonomy Mapping Pipeline -->
     <div class="card">
-      <h2>Taxonomy Mapping Pipeline</h2>
+      <h2>2. Taxonomy Mapping Pipeline</h2>
+      <p>3-level classification: Track → Topic → Subtopic using a 200+ keyword dictionary. Signals matched from 3+ independent sources receive a convergence flag for higher confidence.</p>
       <div class="mermaid">
 graph TD
-    S1["Raw Signal Text"] --> S2["Tokenization"]
-    S2 --> S3["Keyword Match\n200+ term dictionary"]
-    S3 --> S4{"Match Found?"}
-    S4 -->|Yes| S5["Assign Track\n(1 of 10)"]
-    S4 -->|No| S6["Unmapped/Other\n(~5-11%)"]
-    S5 --> S7["Assign Topic"]
-    S7 --> S8["Assign Subtopic"]
-    S8 --> S9["Multi-Signal Alignment"]
-    S9 --> S10{"3+ Sources\nAgree?"}
-    S10 -->|Yes| S11["✅ Signal Convergence Flag"]
-    S10 -->|No| S12["Standard Mapping"]
-    S6 --> S13["Manual Review Queue"]
-    style S5 fill:#e8f5e9,stroke:#28a745
-    style S6 fill:#fde8ea,stroke:#dc3545
-    style S11 fill:#FFF8E1,stroke:#FFC220
+    S1[Raw Signal Text] --> S2[Tokenization]
+    S2 --> S3[Keyword Match<br/>200 term dictionary]
+    S3 --> S4{Match Found?}
+    S4 -->|Yes| S5[Assign Track<br/>1 of 10]
+    S4 -->|No| S6[Unmapped Other<br/>5 to 11 percent]
+    S5 --> S7[Assign Topic]
+    S7 --> S8[Assign Subtopic]
+    S8 --> S9[Multi-Signal Alignment]
+    S9 --> S10{3 or more Sources Agree?}
+    S10 -->|Yes| S11[Signal Convergence Flag]
+    S10 -->|No| S12[Standard Mapping]
+    S6 --> S13[Manual Review Queue]
+    style S5 fill:#e8f5e9,stroke:#28a745,color:#155724
+    style S6 fill:#fde8ea,stroke:#dc3545,color:#721c24
+    style S11 fill:#FFF8E1,stroke:#FFC220,color:#856404
+    style S1 fill:#E6F2FF,stroke:#0071CE,color:#004C91
       </div>
     </div>
 
+    <!-- DIAGRAM 3: Data Processing Workflow -->
     <div class="card">
-      <h2>Data Processing Workflow</h2>
-      <p>Detailed step-by-step processing workflow showing how raw data from each source is ingested, normalized, classified, and stored before rendering in the dashboard.</p>
+      <h2>3. Data Processing Workflow</h2>
+      <p>Detailed 5-stage pipeline showing how raw data is ingested, normalized, classified, enriched with scores, and rendered in the dashboard.</p>
       <div class="mermaid">
-graph LR
-    subgraph Ingest["1️⃣ Data Ingestion"]
-        I1["CSV / XLSX\nExport"]
-        I2["API Pull\n(Reddit, Forum)"]
-        I3["Jira Export\n(PER)"]
-        I4["Survey Export\n(VoS, Doorbell)"]
+graph TD
+    subgraph Stage1[Stage 1 - Data Ingestion]
+        I1[CSV and XLSX Export]
+        I2[API Pull<br/>Reddit and Forum]
+        I3[Jira Export<br/>PER]
+        I4[Survey Export<br/>VoS and Doorbell]
     end
-    subgraph Normalize["2️⃣ Normalize"]
-        N1["Schema Alignment\n(unified columns)"]
-        N2["Date Parsing\n& Standardization"]
-        N3["Text Cleaning\n& UTF-8 Encoding"]
-        N4["PII Auto-Redaction\n(emails, phones, IDs)"]
+    subgraph Stage2[Stage 2 - Normalize]
+        N1[Schema Alignment<br/>unified columns]
+        N2[Date Parsing<br/>standardization]
+        N3[Text Cleaning<br/>UTF-8 Encoding]
+        N4[PII Auto-Redaction<br/>emails phones IDs]
     end
-    subgraph Classify["3️⃣ Classify"]
-        C1["Keyword Extraction\n200+ term dictionary"]
-        C2["Track Assignment\n10 Product Tracks"]
-        C3["Topic → Subtopic\n3-level taxonomy"]
-        C4["Sentiment Scoring\nPositive / Neutral / Negative"]
+    subgraph Stage3[Stage 3 - Classify]
+        CL1[Keyword Extraction<br/>200 term dictionary]
+        CL2[Track Assignment<br/>10 Product Tracks]
+        CL3[Topic to Subtopic<br/>3-level taxonomy]
+        CL4[Sentiment Scoring<br/>Pos Neutral Neg]
     end
-    subgraph Enrich["4️⃣ Enrich & Score"]
-        E1["Cross-Source\nConvergence Check"]
-        E2["Paper Cut Scoring\n6-dimension composite"]
-        E3["AOP ID Mapping\nFY27 initiative alignment"]
-        E4["Confidence Rating\nHigh / Medium / Low"]
+    subgraph Stage4[Stage 4 - Enrich and Score]
+        E1[Cross-Source<br/>Convergence Check]
+        E2[Paper Cut Scoring<br/>6 dimension composite]
+        E3[AOP ID Mapping<br/>FY27 initiative alignment]
+        E4[Confidence Rating<br/>High Medium Low]
     end
-    subgraph Render["5️⃣ Dashboard Render"]
-        R1["Embed in HTML\n(self-contained)"]
-        R2["Chart.js\nVisualizations"]
-        R3["Interactive Filters\n& Drill-down"]
+    subgraph Stage5[Stage 5 - Dashboard Render]
+        R1[Embed in HTML<br/>self-contained]
+        R2[Chart.js<br/>Visualizations]
+        R3[Interactive Filters<br/>and Drill-down]
     end
-    I1 & I2 & I3 & I4 --> N1
-    N1 --> N2 --> N3 --> N4
-    N4 --> C1
-    C1 --> C2 --> C3 --> C4
-    C4 --> E1
-    E1 --> E2 --> E3 --> E4
+    I1 --> N1
+    I2 --> N1
+    I3 --> N1
+    I4 --> N1
+    N1 --> N2
+    N2 --> N3
+    N3 --> N4
+    N4 --> CL1
+    CL1 --> CL2
+    CL2 --> CL3
+    CL3 --> CL4
+    CL4 --> E1
+    E1 --> E2
+    E2 --> E3
+    E3 --> E4
     E4 --> R1
-    R1 --> R2 --> R3
-    style Ingest fill:#E6F2FF,stroke:#0071CE
-    style Normalize fill:#f3e8ff,stroke:#8e44ad
-    style Classify fill:#FFF8E1,stroke:#FFC220
-    style Enrich fill:#e8f5e9,stroke:#28a745
-    style Render fill:#fde8ea,stroke:#dc3545
+    R1 --> R2
+    R2 --> R3
+    style Stage1 fill:#E6F2FF,stroke:#0071CE,color:#004C91
+    style Stage2 fill:#f3e8ff,stroke:#8e44ad,color:#6c3483
+    style Stage3 fill:#FFF8E1,stroke:#FFC220,color:#856404
+    style Stage4 fill:#e8f5e9,stroke:#28a745,color:#155724
+    style Stage5 fill:#fde8ea,stroke:#dc3545,color:#721c24
       </div>
     </div>
 
+    <!-- DIAGRAM 4: Dashboard Architecture -->
     <div class="card">
-      <h2>Dashboard Architecture</h2>
+      <h2>4. Dashboard Architecture</h2>
       <p>Component architecture showing how the self-contained HTML dashboard is structured — from the presentation layer through data binding to the embedded data store.</p>
       <div class="mermaid">
 graph TD
-    subgraph Presentation["🖥️ Presentation Layer"]
-        P1["Header Bar\n(branding, KPI badges)"]
-        P2["Tab Navigation\n(12 tab buttons)"]
-        P3["Filter Bar\n(Track, Source, Date, Severity)"]
+    subgraph PL[Presentation Layer]
+        P1[Header Bar<br/>branding and KPI badges]
+        P2[Tab Navigation<br/>12 tab buttons]
+        P3[Filter Bar<br/>Track Source Date Severity]
     end
-    subgraph Views["📊 View Components (12 Tabs)"]
-        V1["Table of Contents"]
-        V2["Executive Overview\n(KPI cards, charts)"]
-        V3["Track Explorer\n(3-level drill-down)"]
-        V4["Track Map\n(heatmap grid)"]
-        V5["AOP Alignment\n(gap analysis table)"]
-        V6["Paper Cuts Intelligence\n(scoring, heatmap, sparklines)"]
-        V7["Verbatim Evidence\n(PII-redacted search)"]
-        V8["Track Crosswalk\n(legacy → official mapping)"]
-        V9["Voice of Seller\n(status tracking)"]
-        V10["Product ER\n(Jira status board)"]
-        V11["Seller Forum\n(threads + CSV export)"]
-        V12["FAQ / Methodology"]
+    subgraph VL[View Components - 12 Tabs]
+        V1[Table of Contents]
+        V2[Executive Overview]
+        V3[Track Explorer]
+        V4[Track Map]
+        V5[AOP Alignment]
+        V6[Paper Cuts Intelligence]
+        V7[Verbatim Evidence]
+        V8[Track Crosswalk]
+        V9[Voice of Seller]
+        V10[Product ER]
+        V11[Seller Forum]
+        V12[FAQ and Methodology]
     end
-    subgraph Logic["⚙️ JavaScript Logic Layer"]
-        L1["showTab() — Tab switching"]
-        L2["initPaperCuts() — Scoring engine"]
-        L3["filterExplorer() — Cascading filters"]
-        L4["redactPII() — Auto-redaction"]
-        L5["exportCSV() — Data export"]
-        L6["Chart.js — Chart rendering"]
+    subgraph JL[JavaScript Logic Layer]
+        L1[showTab - Tab switching]
+        L2[initPaperCuts - Scoring engine]
+        L3[filterExplorer - Cascading filters]
+        L4[redactPII - Auto-redaction]
+        L5[exportCSV - Data export]
+        L6[Chart.js - Chart rendering]
     end
-    subgraph Data["💾 Embedded Data Store"]
-        D1["trackData{}\n10 tracks × topics × subtopics"]
-        D2["paperCutData[]\n15 scored issues"]
-        D3["aopMapping{}\nFY27 initiative IDs"]
-        D4["vosIssues[]\n139 escalations"]
-        D5["perIssues[]\n194 Jira items"]
-        D6["forumThreads[]\n483 threads"]
+    subgraph DL[Embedded Data Store]
+        D1[trackData<br/>10 tracks x topics x subtopics]
+        D2[paperCutData<br/>15 scored issues]
+        D3[aopMapping<br/>FY27 initiative IDs]
+        D4[vosIssues<br/>139 escalations]
+        D5[perIssues<br/>194 Jira items]
+        D6[forumThreads<br/>483 threads]
     end
-    P1 --> P2 --> P3
-    P3 --> V2 & V3 & V4 & V5 & V6 & V7
-    V1 -.->|"navigate"| V2
+    P1 --> P2
+    P2 --> P3
+    P3 --> V2
+    P3 --> V3
+    P3 --> V6
+    P3 --> V7
     V2 --> L6
     V3 --> L3
     V6 --> L2
     V7 --> L4
     V11 --> L5
-    L1 --> V1 & V2 & V3 & V4 & V5 & V6 & V7 & V8 & V9 & V10 & V11 & V12
+    L1 --> V1
+    L1 --> V2
+    L1 --> V3
+    L1 --> V12
     L2 --> D2
     L3 --> D1
-    L6 --> D1 & D2 & D3
+    L6 --> D1
+    L6 --> D2
     L4 --> D1
     L5 --> D6
     V9 --> D4
     V10 --> D5
-    style Presentation fill:#E6F2FF,stroke:#0071CE
-    style Views fill:#FFF8E1,stroke:#FFC220
-    style Logic fill:#f3e8ff,stroke:#8e44ad
-    style Data fill:#e8f5e9,stroke:#28a745
+    style PL fill:#E6F2FF,stroke:#0071CE,color:#004C91
+    style VL fill:#FFF8E1,stroke:#FFC220,color:#856404
+    style JL fill:#f3e8ff,stroke:#8e44ad,color:#6c3483
+    style DL fill:#e8f5e9,stroke:#28a745,color:#155724
       </div>
     </div>
 
+    <!-- DIAGRAM 5: Paper Cut Scoring Engine -->
     <div class="card">
-      <h2>Paper Cut Scoring Engine</h2>
+      <h2>5. Paper Cut Scoring Engine</h2>
       <div class="formula"><strong>pc_score = </strong>(recurrence × 0.25) + (breadth × 0.20) + (persistence × 0.20) + (friction_signal × 0.20) + (support_burden × 0.10) + (source_diversity × 0.05)</div>
       <div class="mermaid">
 graph LR
-    subgraph Input["📥 Input Signals"]
-        I1["Signal Volume\nper issue"]
-        I2["Unique Sellers\n/ PIDs / Geos"]
-        I3["Time Span\n(weeks present)"]
-        I4["Negative Sentiment\nIntensity"]
-        I5["Support Cases\n& Escalations"]
-        I6["Source Count\n(max 7)"]
+    subgraph Input[Input Signals]
+        I1[Signal Volume<br/>per issue]
+        I2[Unique Sellers<br/>PIDs and Geos]
+        I3[Time Span<br/>weeks present]
+        I4[Negative Sentiment<br/>Intensity]
+        I5[Support Cases<br/>and Escalations]
+        I6[Source Count<br/>max 7]
     end
-    subgraph Score["📐 Scoring"]
-        S1["Recurrence\n× 0.25"]
-        S2["Breadth\n× 0.20"]
-        S3["Persistence\n× 0.20"]
-        S4["Friction Signal\n× 0.20"]
-        S5["Support Burden\n× 0.10"]
-        S6["Source Diversity\n× 0.05"]
-        SC["Composite\npc_score"]
+    subgraph Score[Scoring Engine]
+        S1[Recurrence<br/>x 0.25]
+        S2[Breadth<br/>x 0.20]
+        S3[Persistence<br/>x 0.20]
+        S4[Friction Signal<br/>x 0.20]
+        S5[Support Burden<br/>x 0.10]
+        S6[Source Diversity<br/>x 0.05]
+        SC[Composite<br/>pc_score]
     end
-    subgraph Output["📤 Classification"]
-        O1["Score ≥ 88\n🔴 CRITICAL (5)"]
-        O2["Score ≥ 70\n🟠 PAPER CUT (15)"]
-        O3["Score < 70\n⚪ Below threshold"]
+    subgraph Output[Classification]
+        O1[CRITICAL<br/>Score 88 plus - 5 issues]
+        O2[PAPER CUT<br/>Score 70 plus - 15 issues]
+        O3[Below Threshold<br/>Score under 70]
     end
     I1 --> S1
     I2 --> S2
@@ -566,11 +604,18 @@ graph LR
     I4 --> S4
     I5 --> S5
     I6 --> S6
-    S1 & S2 & S3 & S4 & S5 & S6 --> SC
-    SC --> O1 & O2 & O3
-    style Input fill:#E6F2FF,stroke:#0071CE
-    style Score fill:#FFF8E1,stroke:#FFC220
-    style Output fill:#fde8ea,stroke:#dc3545
+    S1 --> SC
+    S2 --> SC
+    S3 --> SC
+    S4 --> SC
+    S5 --> SC
+    S6 --> SC
+    SC --> O1
+    SC --> O2
+    SC --> O3
+    style Input fill:#E6F2FF,stroke:#0071CE,color:#004C91
+    style Score fill:#FFF8E1,stroke:#FFC220,color:#856404
+    style Output fill:#fde8ea,stroke:#dc3545,color:#721c24
       </div>
       <table>
         <thead><tr><th>Dimension</th><th>Weight</th><th>Definition</th><th>Scale</th></tr></thead>
@@ -1223,13 +1268,58 @@ function toggleRecipe(el) {
 
 /* ═══ MERMAID INIT ═══ */
 mermaid.initialize({
-  startOnLoad: true,
+  startOnLoad: false,
   theme: 'base',
   themeVariables: {
     primaryColor: '#E6F2FF', primaryTextColor: '#1a1a2e', primaryBorderColor: '#0071CE',
     lineColor: '#0071CE', secondaryColor: '#FFF8E1', tertiaryColor: '#e8f5e9', fontSize: '13px'
   },
   flowchart: { useMaxWidth: true, htmlLabels: true, curve: 'basis' }
+});
+
+/* ═══ RENDER MERMAID IN ALL PANELS (including hidden) ═══ */
+document.addEventListener('DOMContentLoaded', async function() {
+  // Temporarily make all hidden panels visible for Mermaid to calculate dimensions
+  const allPanels = document.querySelectorAll('.tab-panel, .sub-panel');
+  const originalStyles = [];
+  allPanels.forEach((el, i) => {
+    originalStyles[i] = { display: el.style.display, visibility: el.style.visibility, position: el.style.position, height: el.style.height, overflow: el.style.overflow };
+    el.style.display = 'block';
+    el.style.visibility = 'hidden';
+    el.style.position = 'absolute';
+    el.style.height = 'auto';
+    el.style.overflow = 'visible';
+  });
+
+  // Run mermaid on all diagrams
+  try {
+    await mermaid.run({ querySelector: '.mermaid' });
+  } catch(e) {
+    console.warn('Mermaid batch render failed, trying individual:', e);
+    // Fallback: render each diagram individually
+    const diagrams = document.querySelectorAll('.mermaid');
+    for (let i = 0; i < diagrams.length; i++) {
+      try {
+        const el = diagrams[i];
+        if (!el.getAttribute('data-processed')) {
+          const graphDef = el.textContent;
+          const { svg } = await mermaid.render('mermaid-svg-' + i, graphDef);
+          el.innerHTML = svg;
+        }
+      } catch(err) {
+        console.warn('Mermaid diagram ' + i + ' failed:', err);
+      }
+    }
+  }
+
+  // Restore original panel styles
+  allPanels.forEach((el, i) => {
+    el.style.display = originalStyles[i].display;
+    el.style.visibility = originalStyles[i].visibility;
+    el.style.position = originalStyles[i].position;
+    el.style.height = originalStyles[i].height;
+    el.style.overflow = originalStyles[i].overflow;
+  });
 });
 </script>
 </body>
